@@ -1,7 +1,12 @@
 package com.example.revenueshare.ctgy.rs.domain.repository;
 
 import com.example.revenueshare.ctgy.rs.domain.Channel;
+import com.example.revenueshare.ctgy.rs.model.ChannelDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChannelRepository extends JpaRepository<Channel, Long>, ChannelRepositoryCustom {
+import java.util.List;
+
+public interface ChannelRepositoryCustom {
+
+    List<Channel> findAllByDto(ChannelDTO dto);
 }

@@ -8,6 +8,6 @@ public interface CrudService<T, P, ID> {
     T findById(ID id);
     void add(P p);
     void modify(P p);
-    void remove(P p) throws Exception;
+    void removeById(ID id) throws Exception;
     void removeAllById(List<ID> ids) throws Exception;
 }

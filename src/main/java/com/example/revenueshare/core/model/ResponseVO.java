@@ -1,9 +1,13 @@
 package com.example.revenueshare.core.model;
 
-import com.example.revenueshare.core.code.ErrCd;
+import com.example.revenueshare.core.exception.ErrCd;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 
+@Getter
+@ToString
 public class ResponseVO<T> {
 
     private ErrCd errCd;
@@ -12,13 +16,13 @@ public class ResponseVO<T> {
 
     private T resultInfo;
 
-    @Builder(builderClassName = "okBuilder", buildMethodName = "okBuilder")
+    @Builder(builderClassName = "okBuilder", builderMethodName = "okBuilder")
     ResponseVO(T resultInfo){
         this.errCd = ErrCd.OK;
         this.errMsg = ErrCd.OK.getCodeNm();
         this.resultInfo = resultInfo;
     }
-    @Builder(builderClassName = "errBuilder", buildMethodName = "errBuilder")
+    @Builder(builderClassName = "errBuilder", builderMethodName = "errBuilder")
     ResponseVO(ErrCd errCd, String errMsg, T resultInfo){
         this.errCd = errCd;
         this.errMsg = errMsg;
