@@ -1,0 +1,69 @@
+app:
+  name: app-rs
+  port: ${port:38080}
+  log:
+    path: ./logs/logback.log
+
+
+
+server:
+  port: ${app.port}
+
+
+spring:
+  profiles:
+    active: local
+  devtools:
+    livereload:
+      enabled: true
+  pid:
+    file: ${app.name}.pid
+
+  # ===================================================================================================================================
+  # Database ??
+  # ===================================================================================================================================
+  h2:
+    console:
+      enabled: true
+      path: /${app.name}-db
+  sql:
+    init:
+      mode: always
+      platform: h2
+  datasource:
+    url: jdbc:h2:file:./data${spring.h2.console.path};FILE_LOCK=NO
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  hikari:
+    driver-class-name: ${spring.datasource.driver-class-name}
+    jdbc-url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+
+
+
+
+# =====================================================
+# Logging ??
+# =====================================================
+logging:
+  file:
+    name: ${app.log.path}
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}-%i.log
+      max-history: 30
+      max-file-size:
+        100MB
+  level:
+    root: info
+    '[org.hibernate.sql]': debug
