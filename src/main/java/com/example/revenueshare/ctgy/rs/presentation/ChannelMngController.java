@@ -1,15 +1,18 @@
 package com.example.revenueshare.ctgy.rs.presentation;
 
 
-import com.example.revenueshare.ctgy.rs.domain.Channel;
+import com.example.revenueshare.ctgy.rs.service.ChannelMngService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
+@RequiredArgsConstructor
 public class ChannelMngController {
+
+    private final ChannelMngService channelMngService;
 
     @GetMapping("/mng/channel")
     public ResponseEntity findAllBy(){
