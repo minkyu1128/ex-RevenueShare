@@ -1,10 +1,7 @@
 package com.example.revenueshare.ctgy.rs.domain;
 
 import com.example.revenueshare.core.domain.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.apache.tomcat.jni.Local;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,11 +28,4 @@ public class Channel extends BaseEntity {
     @Column(name = "open_de", nullable = false, length = 8)
     private String openDe;
 
-//    @CreationTimestamp
-//    @Column(name = "regist_dt")
-//    private LocalDateTime registDt;
-//
-//    @UpdateTimestamp
-//    @Column(name = "last_updt_dt")
-//    private LocalDateTime lastUpdtDt;
 }
