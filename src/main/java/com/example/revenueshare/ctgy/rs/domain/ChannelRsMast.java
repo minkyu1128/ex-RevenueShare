@@ -1,5 +1,6 @@
 package com.example.revenueshare.ctgy.rs.domain;
 
+import com.example.revenueshare.core.domain.BaseEntity;
 import com.example.revenueshare.ctgy.rs.code.RevnSeCd;
 import com.example.revenueshare.ctgy.rs.domain.ids.ChannelRsMastIds;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "tb_channel_rs_mast", schema = "", catalog = "")
 @IdClass(ChannelRsMastIds.class)
-public class ChannelRsMast {
+public class ChannelRsMast extends BaseEntity {
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "channel_id")
@@ -38,7 +39,4 @@ public class ChannelRsMast {
     @Column(name = "revn_amt", nullable = false)
     private Long revnAmt;
 
-    @CreationTimestamp
-    @Column(name = "regist_dt")
-    private LocalDateTime registDt;
 }

@@ -1,5 +1,6 @@
 package com.example.revenueshare.ctgy.rs.domain;
 
+import com.example.revenueshare.core.domain.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_cmpny", schema = "", catalog = "")
-public class Cmpny {
+public class Cmpny extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "cmpny_id", nullable = false)
@@ -24,12 +25,4 @@ public class Cmpny {
 
     @Column(name = "cmpny_nm", nullable = false, length = 30)
     private String cmpnyNm;
-
-    @CreationTimestamp
-    @Column(name = "regist_dt")
-    private LocalDateTime registDt;
-
-    @UpdateTimestamp
-    @Column(name = "last_updt_dt")
-    private LocalDateTime lastUpdtDt;
 }

@@ -1,5 +1,6 @@
 package com.example.revenueshare.ctgy.rs.domain;
 
+import com.example.revenueshare.core.domain.BaseEntity;
 import com.example.revenueshare.ctgy.rs.code.RevnSeCd;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_channel_revenue", schema = "", catalog = "")
-public class ChannelRevenue {
+public class ChannelRevenue extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ch_revn_id", nullable = false)
@@ -36,7 +37,4 @@ public class ChannelRevenue {
     @Column(name = "revn_amt", nullable = false)
     private Long revnAmt;
 
-    @CreationTimestamp
-    @Column(name = "regist_dt")
-    private LocalDateTime registDt;
 }

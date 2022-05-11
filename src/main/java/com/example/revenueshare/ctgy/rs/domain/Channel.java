@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_channel", schema = "", catalog = "")
-public class Channel {
+public class Channel extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "channel_id", nullable = false)
@@ -26,15 +27,14 @@ public class Channel {
     @Column(name = "channel_nm", nullable = false, length = 30)
     private String channelNm;
 
-    @CreationTimestamp
     @Column(name = "open_de", nullable = false, length = 8)
-    private LocalDateTime openDe;
+    private String openDe;
 
-    @CreationTimestamp
-    @Column(name = "regist_dt")
-    private String registDt;
-
-    @UpdateTimestamp
-    @Column(name = "last_updt_dt")
-    private String lastUpdtDt;
+//    @CreationTimestamp
+//    @Column(name = "regist_dt")
+//    private LocalDateTime registDt;
+//
+//    @UpdateTimestamp
+//    @Column(name = "last_updt_dt")
+//    private LocalDateTime lastUpdtDt;
 }
