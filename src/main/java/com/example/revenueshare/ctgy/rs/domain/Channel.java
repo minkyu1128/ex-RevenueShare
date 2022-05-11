@@ -28,4 +28,9 @@ public class Channel extends BaseEntity {
     @Column(name = "open_de", nullable = false, length = 8)
     private String openDe;
 
+    @Column(name = "close_de", nullable = true, length = 8)
+    private String closeDe;
+
+    @Column(name = "use_yn", nullable = false, length = 1)
+    private String useYn;
 }
