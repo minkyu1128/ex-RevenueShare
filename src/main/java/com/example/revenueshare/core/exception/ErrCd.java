@@ -4,7 +4,7 @@ package com.example.revenueshare.core.exception;
 import com.example.revenueshare.core.code.CodeMapperType;
 
 /**
- * 수익구분 코드
+ * 에러 코드
  */
 public enum ErrCd implements CodeMapperType {
 
