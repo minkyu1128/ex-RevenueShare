@@ -51,6 +51,7 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: true
+    show-sql: true
 
 
 
@@ -81,6 +82,9 @@ springdoc:
 # Logging ??
 # =====================================================
 logging:
+  charset:
+    console: utf-8
+    file: utf-8
   file:
     name: ${app.log.path}
   logback:
