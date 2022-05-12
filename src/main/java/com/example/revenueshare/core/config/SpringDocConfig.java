@@ -18,8 +18,8 @@ public class SpringDocConfig {
 
     @Bean
     public OpenAPI openAPI(@Value("${app.url}") String url
-                        ,@Value("${app.version}") String appVersion
-                        ,@Value("${spring.profiles.active}") String active) {
+            , @Value("${app.version}") String appVersion
+            , @Value("${spring.profiles.active}") String active) {
         Info info = new Info().title("RS API - Active Profile: " + active)
                 .version(appVersion)
                 .description("유튜브 채널 수익배분 Application API 입니다.")
@@ -28,7 +28,7 @@ public class SpringDocConfig {
                 .license(new License().name("Apache License Version 2.0").url("http://www.apache.org/licenses/LICENSE-2.0"));
 
         /*TODO : 등록시 url 뒤에 url에 ... (curl 실행시)*/
-        List<Server> servers = Arrays.asList(new Server().url(url).description("RS api (" + active +")"));
+        List<Server> servers = Arrays.asList(new Server().url(url).description("RS api (" + active + ")"));
 
 
         return new OpenAPI()
@@ -37,18 +37,36 @@ public class SpringDocConfig {
     }
 
 
-
-
-//    @Profile({"local"})
+    //    @Profile({"local"})
     @Bean
-    public GroupedOpenApi baseInfoMngApiDoc() {
+    public GroupedOpenApi baseMngApiDoc() {
         return GroupedOpenApi.builder()
-                .group("기초정보관리")
+                .group("1.기초정보관리")
                 .pathsToMatch(
-                        "/base/**"
+                        "/mng/base/**"
                 )
                 .build();
     }
+    @Bean
+    public GroupedOpenApi cntrtMngApiDoc() {
+        return GroupedOpenApi.builder()
+                .group("2.계약정보관리")
+                .pathsToMatch(
+                        "/mng/cntrt/**"
+                )
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi revnMngApiDoc() {
+        return GroupedOpenApi.builder()
+                .group("3.수익관리")
+                .pathsToMatch(
+                        "/mng/revn/**"
+                )
+                .build();
+    }
+
 
 
 }

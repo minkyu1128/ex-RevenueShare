@@ -18,6 +18,7 @@ public enum ErrCd implements CodeMapperType {
 
 
     , ERR500("Server 오류", HttpStatus.INTERNAL_SERVER_ERROR)
+    , ERR501("처리 불가", HttpStatus.INTERNAL_SERVER_ERROR)
 
 
     , ERR600("API 오류", HttpStatus.BAD_GATEWAY)

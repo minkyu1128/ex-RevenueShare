@@ -33,10 +33,11 @@ spring:
       mode: always
       platform: h2
   datasource:
-    url: jdbc:h2:file:./data${spring.h2.console.path};FILE_LOCK=NO
+#    url: jdbc:h2:file:./data${spring.h2.console.path};FILE_LOCK=NO
+    url: jdbc:h2:file:./data${spring.h2.console.path};AUTO_SERVER=true
     driver-class-name: org.h2.Driver
     username: sa
-    password:
+    password: rs
   hikari:
     driver-class-name: ${spring.datasource.driver-class-name}
     jdbc-url: ${spring.datasource.url}
