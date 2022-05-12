@@ -1,17 +1,14 @@
 package com.example.revenueshare.ctgy.rs.domain;
 
 import com.example.revenueshare.core.domain.BaseEntity;
-import com.example.revenueshare.ctgy.rs.code.RevnSeCd;
 import com.example.revenueshare.ctgy.rs.domain.ids.ChannelRsMastIds;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,14 +24,13 @@ public class ChannelRsMast extends BaseEntity {
     @Column(name = "cal_ym", length = 6)
     private String calYm;
 
-    @Column(name = "revn_de", nullable = false, length = 8)
-    private String revnDe;
+    @Column(name = "tot_amt", nullable = false)
+    private Long totAmt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "revn_se_cd", nullable = false, length = 10)
-    private RevnSeCd revnSeCd;
+    @Column(name = "channel_amt")
+    private Long channelAmt;
 
-    @Column(name = "revn_amt", nullable = false)
-    private Long revnAmt;
+    @Column(name = "balance_amt")
+    private Long balanceAmt;
 
 }

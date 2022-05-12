@@ -22,7 +22,7 @@ spring:
     file: ${app.name}.pid
 
   # ===================================================================================================================================
-  # Database ??
+  # Database 설정
   # ===================================================================================================================================
   h2:
     console:
@@ -52,6 +52,28 @@ spring:
     open-in-view: true
 
 
+
+# ==================================================================================================================
+# spring-doc 설정
+# ==================================================================================================================
+springdoc:
+  #show-actuator: true
+  #show-login-endpoint: true
+  writer-with-default-pretty-printer: true
+  model-and-view-allowed: true
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: swagger-ui.html
+    display-request-duration: true
+    operations-sorter: alpha #alpha/method
+    tags-sorter: alpha
+    disable-swagger-default-url: true
+    display-query-params-without-oauth2: true
+    csrf:
+      enabled: false
 
 
 # =====================================================

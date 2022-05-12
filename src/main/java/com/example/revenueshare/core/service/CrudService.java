@@ -2,12 +2,12 @@ package com.example.revenueshare.core.service;
 
 import java.util.List;
 
-public interface CrudService<T, P, ID> {
+public interface CrudService<T, SDT, DT, ID> {
 
-    T findAllBy(P p);
+    T findAllBy(SDT p);
     T findById(ID id);
-    void add(P p);
-    void modify(P p);
+    void add(DT p);
+    void modify(DT p);
     void removeById(ID id) throws Exception;
     void removeAllById(List<ID> ids) throws Exception;
 }

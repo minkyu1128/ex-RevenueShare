@@ -3,20 +3,18 @@ package com.example.revenueshare.ctgy.rs.domain;
 import com.example.revenueshare.core.domain.BaseEntity;
 import com.example.revenueshare.ctgy.rs.domain.ids.ChannelRevenueMastCmpIds;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_channel_revenue_mast_cmp", schema = "", catalog = "")
 @IdClass(ChannelRevenueMastCmpIds.class)
-public class ChannelRevenueMastCmp extends BaseEntity {
+public class ChannelRevnMastCmp extends BaseEntity {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,7 +22,7 @@ public class ChannelRevenueMastCmp extends BaseEntity {
     private ContractCmpny contractCmpny;
 
     @Id
-    @Column(name = "cal_ym")
+    @Column(name = "cal_ym", length = 6)
     private String calYm;
 
     @Column(name = "cal_amt")

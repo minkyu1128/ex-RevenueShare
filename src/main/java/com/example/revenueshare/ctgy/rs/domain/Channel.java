@@ -2,16 +2,12 @@ package com.example.revenueshare.ctgy.rs.domain;
 
 import com.example.revenueshare.core.domain.BaseEntity;
 import lombok.*;
-import org.apache.tomcat.jni.Local;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

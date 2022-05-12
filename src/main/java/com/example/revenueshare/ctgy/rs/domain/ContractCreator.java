@@ -2,14 +2,12 @@ package com.example.revenueshare.ctgy.rs.domain;
 
 import com.example.revenueshare.core.domain.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,8 +15,8 @@ import java.time.LocalDateTime;
 public class ContractCreator extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "cntr_cmp_id", nullable = false)
-    private Long cntrCmpId;
+    @Column(name = "cntr_crt_id", nullable = false)
+    private Long cntrCrtId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", nullable = false)

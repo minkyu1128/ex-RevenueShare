@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class CrudServiceTmplate<T, P, ID> implements CrudService<T, P, ID>{
+public abstract class CrudServiceTmplate<T, SDT, DT, ID> implements CrudService<T, SDT, DT, ID>{
 
 
-    protected ResponseVO validate(P p){
+    protected ResponseVO validate(DT p){
 
         final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<P>> list = validator.validate(p);
+        Set<ConstraintViolation<DT>> list = validator.validate(p);
         if (list.size() > 0) {
             return ResponseVO.errBuilder()
                     .errCd(ErrCd.ERR401)

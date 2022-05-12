@@ -7,9 +7,9 @@ import com.example.revenueshare.core.service.CrudServiceTmplate;
 import com.example.revenueshare.ctgy.rs.domain.Channel;
 import com.example.revenueshare.ctgy.rs.domain.repository.ChannelRepository;
 import com.example.revenueshare.ctgy.rs.model.ChannelDTO;
+import com.example.revenueshare.ctgy.rs.model.ChannelSearchDTO;
 import com.example.revenueshare.ctgy.rs.model.mapstruct.ChannelMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +21,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ChannelMngService extends CrudServiceTmplate<ResponseVO, ChannelDTO, Long> {
+public class ChannelMngService extends CrudServiceTmplate<ResponseVO, ChannelSearchDTO, ChannelDTO, Long> {
 
     private final ChannelRepository channelRepository;
 
     private ChannelMapper mapper = Mappers.getMapper(ChannelMapper.class);
 
     @Override
-    public ResponseVO<List<ChannelDTO>> findAllBy(ChannelDTO channelDTO) {
+    public ResponseVO<List<ChannelDTO>> findAllBy(ChannelSearchDTO searchDTO) {
 
-        List<Channel> channels = channelRepository.findAllByDto(channelDTO);
+        List<Channel> channels = channelRepository.findAllByDto(searchDTO);
 
         List<ChannelDTO> resultInfo = channels.size() == 0 ?
                 new ArrayList<ChannelDTO>() :
