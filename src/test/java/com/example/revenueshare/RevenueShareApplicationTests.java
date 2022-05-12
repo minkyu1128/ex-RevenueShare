@@ -14,8 +14,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles({"test"})
 class RevenueShareApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+//    @Test
+//    void contextLoads() {
+//    }
 
 }

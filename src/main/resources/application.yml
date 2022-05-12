@@ -1,8 +1,8 @@
 app:
   name: app-rs
   version: 1.0.0
-  url: ${app-url:http://127.0.0.1}
   port: ${port:38080}
+  url: ${app-url:http://localhost}:${app.port}
   log:
     path: ./logs/logback.log
 

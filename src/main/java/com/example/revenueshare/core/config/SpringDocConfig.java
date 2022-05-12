@@ -45,7 +45,7 @@ public class SpringDocConfig {
         return GroupedOpenApi.builder()
                 .group("기초정보관리")
                 .pathsToMatch(
-                        "/mng/**"
+                        "/base/**"
                 )
                 .build();
     }
