@@ -1,15 +1,17 @@
 package com.example.revenueshare.biz.mng.revn.service;
 
-import com.example.revenueshare.core.exception.ErrCd;
-import com.example.revenueshare.core.exception.RsException;
-import com.example.revenueshare.core.model.ResponseVO;
-import com.example.revenueshare.core.service.CrudServiceTmplate;
+import com.example.revenueshare.biz.mng.cntrt.domain.repository.ContractCmpnyRepository;
 import com.example.revenueshare.biz.mng.revn.domain.ChannelRevnMastCmp;
 import com.example.revenueshare.biz.mng.revn.domain.ids.ChannelRevenueMastCmpIds;
 import com.example.revenueshare.biz.mng.revn.domain.repository.ChannelRevnMastCmpRepository;
 import com.example.revenueshare.biz.mng.revn.model.ChannelRevnMastCmpDTO;
 import com.example.revenueshare.biz.mng.revn.model.ChannelRevnMastCmpSearchDTO;
 import com.example.revenueshare.biz.mng.revn.model.mapstruct.ChannelRevnMastCmpMapper;
+import com.example.revenueshare.core.exception.ErrCd;
+import com.example.revenueshare.core.exception.RsException;
+import com.example.revenueshare.core.model.ResponseVO;
+import com.example.revenueshare.core.service.CrudValidServiceTmplate;
+import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -22,9 +24,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ChannelRevnMastCmpMngService extends CrudServiceTmplate<ResponseVO, ChannelRevnMastCmpSearchDTO, ChannelRevnMastCmpDTO, ChannelRevenueMastCmpIds> {
+public class ChannelRevnMastCmpMngService extends CrudValidServiceTmplate<ResponseVO, ChannelRevnMastCmpSearchDTO, ChannelRevnMastCmpDTO, ChannelRevenueMastCmpIds> {
 
     private final ChannelRevnMastCmpRepository channelRevnMastCmpRepository;
+    private final ContractCmpnyRepository contractCmpnyRepository;
 
     private ChannelRevnMastCmpMapper mapper = Mappers.getMapper(ChannelRevnMastCmpMapper.class);
 
@@ -64,23 +67,31 @@ public class ChannelRevnMastCmpMngService extends CrudServiceTmplate<ResponseVO,
     }
 
     @Override
-    public void add(ChannelRevnMastCmpDTO dto) {
+    protected void validate(ChannelRevnMastCmpDTO dto, ValidateType type) {
         /* ======================================================
          * validate
          ====================================================== */
-        ResponseVO validate = validate(dto);
+        ResponseVO validate = validation(dto);
         if (!ErrCd.OK.equals(validate.getErrCd()))
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
-        channelRevnMastCmpRepository.findById(ChannelRevenueMastCmpIds.builder()
-                        .contractCmpny(dto.getCntrCmpId())
-                        .calYm(dto.getCalYm())
-                        .build())
-                .ifPresent(data -> {
-                    throw new RsException(ErrCd.ERR401, String.format("%s 채널의 수익(%)이 등록되어 있습니다.", data.getContractCmpny().getChannel().getChannelNm(), data.getCalYm()));
-                });
+        contractCmpnyRepository.findById(dto.getCntrCmpId())
+                .orElseThrow(() -> new RsException(ErrCd.ERR401, String.format("등록되지 않은 계약정보(%d) 입니다.", dto.getCntrCmpId())));
+        if (type.equals(ValidateType.C))
+            channelRevnMastCmpRepository.findById(ChannelRevenueMastCmpIds.builder()
+                            .contractCmpny(dto.getCntrCmpId())
+                            .calYm(dto.getCalYm())
+                            .build())
+                    .ifPresent(data -> {
+                        throw new RsException(ErrCd.ERR401, String.format("%s 채널의 수익(%)이 등록되어 있습니다.", data.getContractCmpny().getChannel().getChannelNm(), data.getCalYm()));
+                    });
+
+    }
+
+    @Override
+    protected void addProc(ChannelRevnMastCmpDTO dto) {
 
         /* ======================================================
-         * find data
+         * conversion
          ====================================================== */
         ChannelRevnMastCmp channelRevnMastCmp = mapper.toEntity(dto);
 
@@ -91,13 +102,7 @@ public class ChannelRevnMastCmpMngService extends CrudServiceTmplate<ResponseVO,
     }
 
     @Override
-    public void modify(ChannelRevnMastCmpDTO dto) {
-        /* ======================================================
-         * validate
-         ====================================================== */
-        ResponseVO validate = validate(dto);
-        if (!ErrCd.OK.equals(validate.getErrCd()))
-            throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
+    protected void modifyProc(ChannelRevnMastCmpDTO dto) {
 
         /* ======================================================
          * find data

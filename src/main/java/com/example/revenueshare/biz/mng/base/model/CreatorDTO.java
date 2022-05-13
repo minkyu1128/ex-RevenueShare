@@ -6,7 +6,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Builder
@@ -16,12 +16,12 @@ public class CreatorDTO {
     @Schema(required = false, title = "크리에이터ID", example = " ", description = " ")
     private Long creatorId;
 
-    @NotEmpty(message = "채널ID(은)는 필수 입력값 입니다.")
-    @Length(max = 30, message = "채널ID의 길이가 유효하지 않습니다.")
-    @Schema(required = true, title = "채널ID", example = " ", description = " ")
+    @NotBlank(message = "크리에이터명(은)는 필수 입력값 입니다.")
+    @Length(max = 30, message = "크리에이터명의 길이가 유효하지 않습니다.")
+    @Schema(required = true, title = "크리에이터명", example = " ", description = " ")
     private String creatorNm;
 
-    @Pattern(regexp = "[0-9]", message = "나이(은)는 숫자만 입력 가능 합니다.")
+//    @Pattern(regexp = "[0-9]", message = "나이(은)는 숫자만 입력 가능 합니다.")
     @Schema(required = false, title = "나이", example = " ", description = " ")
     private Integer age;
 

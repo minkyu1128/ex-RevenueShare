@@ -1,15 +1,16 @@
 package com.example.revenueshare.biz.mng.revn.service;
 
-import com.example.revenueshare.biz.mng.revn.domain.repository.ChannelRsMastRepository;
-import com.example.revenueshare.core.exception.ErrCd;
-import com.example.revenueshare.core.exception.RsException;
-import com.example.revenueshare.core.model.ResponseVO;
-import com.example.revenueshare.core.service.CrudServiceTmplate;
 import com.example.revenueshare.biz.mng.revn.domain.ChannelRsMast;
 import com.example.revenueshare.biz.mng.revn.domain.ids.ChannelRsMastIds;
+import com.example.revenueshare.biz.mng.revn.domain.repository.ChannelRsMastRepository;
 import com.example.revenueshare.biz.mng.revn.model.ChannelRsMastDTO;
 import com.example.revenueshare.biz.mng.revn.model.ChannelRsMastSearchDTO;
 import com.example.revenueshare.biz.mng.revn.model.mapstruct.ChannelRsMastMapper;
+import com.example.revenueshare.core.exception.ErrCd;
+import com.example.revenueshare.core.exception.RsException;
+import com.example.revenueshare.core.model.ResponseVO;
+import com.example.revenueshare.core.service.CrudValidServiceTmplate;
+import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ChannelRsMastMngService extends CrudServiceTmplate<ResponseVO, ChannelRsMastSearchDTO, ChannelRsMastDTO, ChannelRsMastIds> {
+public class ChannelRsMastMngService extends CrudValidServiceTmplate<ResponseVO, ChannelRsMastSearchDTO, ChannelRsMastDTO, ChannelRsMastIds> {
 
     private final ChannelRsMastRepository channelRsMastRepository;
 
@@ -64,16 +65,21 @@ public class ChannelRsMastMngService extends CrudServiceTmplate<ResponseVO, Chan
     }
 
     @Override
-    public void add(ChannelRsMastDTO dto) {
+    protected void validate(ChannelRsMastDTO dto, ValidateType type) {
         /* ======================================================
          * validate
          ====================================================== */
-        ResponseVO validate = validate(dto);
+        ResponseVO validate = validation(dto);
         if (!ErrCd.OK.equals(validate.getErrCd()))
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
 
+    }
+
+    @Override
+    protected void addProc(ChannelRsMastDTO dto) {
+
         /* ======================================================
-         * find data
+         * conversion
          ====================================================== */
         ChannelRsMast channelRsMast = mapper.toEntity(dto);
 
@@ -84,13 +90,7 @@ public class ChannelRsMastMngService extends CrudServiceTmplate<ResponseVO, Chan
     }
 
     @Override
-    public void modify(ChannelRsMastDTO dto) {
-        /* ======================================================
-         * validate
-         ====================================================== */
-        ResponseVO validate = validate(dto);
-        if (!ErrCd.OK.equals(validate.getErrCd()))
-            throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
+    protected void modifyProc(ChannelRsMastDTO dto) {
 
         /* ======================================================
          * find data

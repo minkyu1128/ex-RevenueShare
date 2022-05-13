@@ -1,5 +1,6 @@
 package com.example.revenueshare.biz.mng.revn.service;
 
+import com.example.revenueshare.biz.mng.base.code.RevnSeCd;
 import com.example.revenueshare.biz.mng.revn.domain.ChannelRevn;
 import com.example.revenueshare.biz.mng.revn.domain.repository.ChannelRevnRepository;
 import com.example.revenueshare.biz.mng.revn.model.ChannelRevnDTO;
@@ -8,7 +9,8 @@ import com.example.revenueshare.biz.mng.revn.model.mapstruct.ChannelRevnMapper;
 import com.example.revenueshare.core.exception.ErrCd;
 import com.example.revenueshare.core.exception.RsException;
 import com.example.revenueshare.core.model.ResponseVO;
-import com.example.revenueshare.core.service.CrudServiceTmplate;
+import com.example.revenueshare.core.service.CrudValidServiceTmplate;
+import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ChannelRevnMngService extends CrudServiceTmplate<ResponseVO, ChannelRevnSearchDTO, ChannelRevnDTO, Long> {
+public class ChannelRevnMngService extends CrudValidServiceTmplate<ResponseVO, ChannelRevnSearchDTO, ChannelRevnDTO, Long> {
 
     private final ChannelRevnRepository channelRevnRepository;
 
@@ -65,16 +68,29 @@ public class ChannelRevnMngService extends CrudServiceTmplate<ResponseVO, Channe
     }
 
     @Override
-    public void add(ChannelRevnDTO dto) {
+    protected void validate(ChannelRevnDTO dto, ValidateType type) {
         /* ======================================================
          * validate
          ====================================================== */
-        ResponseVO validate = validate(dto);
+        ResponseVO validate = validation(dto);
         if (!ErrCd.OK.equals(validate.getErrCd()))
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
+        try {
+            RevnSeCd.valueOf(dto.getRevnSeCd());
+        } catch (IllegalArgumentException e) {
+            throw new RsException(ErrCd.ERR401, String.format("수익구분 \"%s\" 값이 유효하지 않습니다. %s", dto.getRevnSeCd(), Arrays.stream(RevnSeCd.values()).map(revnSeCd -> revnSeCd.getCode()).collect(Collectors.toList()).toString()));
+        }
+        여기서부터 할것~~~!!
+        //채널아이디 Exists 체크
+
+
+    }
+
+    @Override
+    protected void addProc(ChannelRevnDTO dto) {
 
         /* ======================================================
-         * find data
+         * conversion
          ====================================================== */
         ChannelRevn channelRevn = mapper.toEntity(dto);
         channelRevn.setRsYn("N");
@@ -87,13 +103,7 @@ public class ChannelRevnMngService extends CrudServiceTmplate<ResponseVO, Channe
     }
 
     @Override
-    public void modify(ChannelRevnDTO dto) {
-        /* ======================================================
-         * validate
-         ====================================================== */
-        ResponseVO validate = validate(dto);
-        if (!ErrCd.OK.equals(validate.getErrCd()))
-            throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
+    protected void modifyProc(ChannelRevnDTO dto) {
 
         /* ======================================================
          * find data
@@ -114,7 +124,7 @@ public class ChannelRevnMngService extends CrudServiceTmplate<ResponseVO, Channe
          ====================================================== */
         ChannelRevn channelRevn = channelRevnRepository.findById(id)
                 .orElseThrow(() -> new RsException(ErrCd.ERR401, "일치하는 자료가 없습니다."));
-        if("Y".equals(channelRevn.getRsYn().toUpperCase(Locale.ROOT)))
+        if ("Y".equals(channelRevn.getRsYn().toUpperCase(Locale.ROOT)))
             throw new RsException(ErrCd.ERR501, "정산이 완료되어 삭제가 불가 합니다.");
 
         /* ======================================================

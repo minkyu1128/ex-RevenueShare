@@ -9,6 +9,8 @@ import com.example.revenueshare.biz.mng.base.domain.repository.CreatorRepository
 import com.example.revenueshare.biz.mng.base.model.CreatorDTO;
 import com.example.revenueshare.biz.mng.base.model.CreatorSearchDTO;
 import com.example.revenueshare.biz.mng.base.model.mapstruct.CreatorMapper;
+import com.example.revenueshare.core.service.CrudValidServiceTmplate;
+import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CreatorMngService extends CrudServiceTmplate<ResponseVO, CreatorSearchDTO, CreatorDTO, Long> {
+public class CreatorMngService extends CrudValidServiceTmplate<ResponseVO, CreatorSearchDTO, CreatorDTO, Long> {
 
     private final CreatorRepository creatorRepository;
 
@@ -63,20 +65,26 @@ public class CreatorMngService extends CrudServiceTmplate<ResponseVO, CreatorSea
     }
 
     @Override
-    public void add(CreatorDTO dto) {
+    protected void validate(CreatorDTO dto, ValidateType type) {
         /* ======================================================
          * validate
          ====================================================== */
-        ResponseVO validate = validate(dto);
+        ResponseVO validate = validation(dto);
         if (!ErrCd.OK.equals(validate.getErrCd()))
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
-        creatorRepository.findByCreatorNm(dto.getCreatorNm())
-                .ifPresent(data -> {
-                    throw new RsException(ErrCd.ERR401, "동일한 크리에이터("+data.getCreatorNm()+")이 등록되어 있습니다.");
-                });
+        if (type.equals(ValidateType.C))
+            creatorRepository.findByCreatorNm(dto.getCreatorNm())
+                    .ifPresent(data -> {
+                        throw new RsException(ErrCd.ERR401, "동일한 크리에이터(" + data.getCreatorNm() + ")이 등록되어 있습니다.");
+                    });
+
+    }
+
+    @Override
+    protected void addProc(CreatorDTO dto) {
 
         /* ======================================================
-         * find data
+         * conversion
          ====================================================== */
         Creator creator = mapper.toEntity(dto);
 
@@ -87,13 +95,7 @@ public class CreatorMngService extends CrudServiceTmplate<ResponseVO, CreatorSea
     }
 
     @Override
-    public void modify(CreatorDTO dto) {
-        /* ======================================================
-         * validate
-         ====================================================== */
-        ResponseVO validate = validate(dto);
-        if (!ErrCd.OK.equals(validate.getErrCd()))
-            throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
+    protected void modifyProc(CreatorDTO dto) {
 
         /* ======================================================
          * find data

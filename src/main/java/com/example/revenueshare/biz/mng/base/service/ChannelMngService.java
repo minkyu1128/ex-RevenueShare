@@ -9,6 +9,8 @@ import com.example.revenueshare.biz.mng.base.domain.Channel;
 import com.example.revenueshare.biz.mng.base.domain.repository.ChannelRepository;
 import com.example.revenueshare.biz.mng.base.model.ChannelDTO;
 import com.example.revenueshare.biz.mng.base.model.ChannelSearchDTO;
+import com.example.revenueshare.core.service.CrudValidServiceTmplate;
+import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ChannelMngService extends CrudServiceTmplate<ResponseVO, ChannelSearchDTO, ChannelDTO, Long> {
+public class ChannelMngService extends CrudValidServiceTmplate<ResponseVO, ChannelSearchDTO, ChannelDTO, Long> {
 
     private final ChannelRepository channelRepository;
 
@@ -63,20 +65,25 @@ public class ChannelMngService extends CrudServiceTmplate<ResponseVO, ChannelSea
     }
 
     @Override
-    public void add(ChannelDTO dto) {
+    protected void validate(ChannelDTO dto, ValidateType type) {
         /* ======================================================
          * validate
          ====================================================== */
-        ResponseVO validate = validate(dto);
+        ResponseVO validate = validation(dto);
         if (!ErrCd.OK.equals(validate.getErrCd()))
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
-        channelRepository.findByChannelNm(dto.getChannelNm())
-                .ifPresent(data -> {
-                    throw new RsException(ErrCd.ERR401, "동일한 채널명("+data.getChannelNm()+")이 등록되어 있습니다.");
-                });
+        if (type.equals(ValidateType.C))
+            channelRepository.findByChannelNm(dto.getChannelNm())
+                    .ifPresent(data -> {
+                        throw new RsException(ErrCd.ERR401, "동일한 채널명(" + data.getChannelNm() + ")이 등록되어 있습니다.");
+                    });
+    }
+
+    @Override
+    protected void addProc(ChannelDTO dto) {
 
         /* ======================================================
-         * find data
+         * conversion
          ====================================================== */
         Channel channel = mapper.toEntity(dto);
 
@@ -89,13 +96,7 @@ public class ChannelMngService extends CrudServiceTmplate<ResponseVO, ChannelSea
     }
 
     @Override
-    public void modify(ChannelDTO dto) {
-        /* ======================================================
-         * validate
-         ====================================================== */
-        ResponseVO validate = validate(dto);
-        if (!ErrCd.OK.equals(validate.getErrCd()))
-            throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
+    protected void modifyProc(ChannelDTO dto) {
 
         /* ======================================================
          * find data

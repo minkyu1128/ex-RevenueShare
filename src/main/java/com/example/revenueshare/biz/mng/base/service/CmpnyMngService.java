@@ -9,6 +9,8 @@ import com.example.revenueshare.biz.mng.base.domain.Cmpny;
 import com.example.revenueshare.biz.mng.base.domain.repository.CmpnyRepository;
 import com.example.revenueshare.biz.mng.base.model.CmpnyDTO;
 import com.example.revenueshare.biz.mng.base.model.CmpnySearchDTO;
+import com.example.revenueshare.core.service.CrudValidServiceTmplate;
+import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CmpnyMngService extends CrudServiceTmplate<ResponseVO, CmpnySearchDTO, CmpnyDTO, Long> {
+public class CmpnyMngService extends CrudValidServiceTmplate<ResponseVO, CmpnySearchDTO, CmpnyDTO, Long> {
 
     private final CmpnyRepository cmpnyRepository;
 
@@ -63,20 +65,26 @@ public class CmpnyMngService extends CrudServiceTmplate<ResponseVO, CmpnySearchD
     }
 
     @Override
-    public void add(CmpnyDTO dto) {
+    protected void validate(CmpnyDTO dto, ValidateType type) {
         /* ======================================================
          * validate
          ====================================================== */
-        ResponseVO validate = validate(dto);
+        ResponseVO validate = validation(dto);
         if (!ErrCd.OK.equals(validate.getErrCd()))
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
-        cmpnyRepository.findByCmpnyNm(dto.getCmpnyNm())
-                .ifPresent(data -> {
-                    throw new RsException(ErrCd.ERR401, "동일한 회사명("+data.getCmpnyNm()+")이 등록되어 있습니다.");
-                });
+        if (type.equals(ValidateType.C))
+            cmpnyRepository.findByCmpnyNm(dto.getCmpnyNm())
+                    .ifPresent(data -> {
+                        throw new RsException(ErrCd.ERR401, "동일한 회사명(" + data.getCmpnyNm() + ")이 등록되어 있습니다.");
+                    });
+
+    }
+
+    @Override
+    protected void addProc(CmpnyDTO dto) {
 
         /* ======================================================
-         * find data
+         * conversion
          ====================================================== */
         Cmpny cmpny = mapper.toEntity(dto);
 
@@ -87,13 +95,7 @@ public class CmpnyMngService extends CrudServiceTmplate<ResponseVO, CmpnySearchD
     }
 
     @Override
-    public void modify(CmpnyDTO dto) {
-        /* ======================================================
-         * validate
-         ====================================================== */
-        ResponseVO validate = validate(dto);
-        if (!ErrCd.OK.equals(validate.getErrCd()))
-            throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
+    protected void modifyProc(CmpnyDTO dto) {
 
         /* ======================================================
          * find data

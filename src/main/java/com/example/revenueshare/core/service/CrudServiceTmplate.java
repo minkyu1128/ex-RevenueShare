@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public abstract class CrudServiceTmplate<T, SDT, DT, ID> implements CrudService<T, SDT, DT, ID>{
 
 
-    protected ResponseVO validate(DT p){
+    protected ResponseVO validation(DT p){
 
         final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<DT>> list = validator.validate(p);
