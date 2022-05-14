@@ -60,9 +60,9 @@ public class SpringDocConfig {
     @Bean
     public GroupedOpenApi revnMngApiDoc() {
         return GroupedOpenApi.builder()
-                .group("3.수익관리")
+                .group("3.채널수익관리")
                 .pathsToMatch(
-                        "/mng/revn/**"
+                        "/mng/ch/revn/**"
                 )
                 .build();
     }

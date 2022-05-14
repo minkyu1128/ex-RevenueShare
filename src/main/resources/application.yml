@@ -96,3 +96,5 @@ logging:
   level:
     root: info
     '[org.hibernate.sql]': debug
+#    '[org.hibernate.jpa]': debug
+    '[org.springframework.orm.jpa]': debug

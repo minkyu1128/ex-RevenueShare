@@ -26,7 +26,7 @@ public class ContractCmpnyDTO {
 
     @NotBlank(message = "계약일자(은)는 필수 입력값 입니다.")
     @Pattern(regexp = "^\\d{4}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$", message = "계약일자의 입력패턴(yyyyMMdd)이 유효하지 않습니다.")
-    @Schema(required = true, title = "계약일자", example = " ", description = " ")
+    @Schema(required = true, title = "계약일자", example = "20220513", description = " ")
     private String cntrDe;
 
     @NotNull(message = "분배수익비율(은)는 필수 입력값 입니다.")
