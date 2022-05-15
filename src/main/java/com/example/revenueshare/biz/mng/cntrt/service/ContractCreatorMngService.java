@@ -40,7 +40,7 @@ public class ContractCreatorMngService extends CrudValidServiceTmplate<ResponseV
         /* ======================================================
          * find data
          ====================================================== */
-        List<ContractCreator> contractCreators = contractCreatorRepository.findAllByDto(searchDTO);
+        List<ContractCreator> contractCreators = contractCreatorRepository.findFetchAllByDto(searchDTO);
 
         /* ======================================================
          * mapping

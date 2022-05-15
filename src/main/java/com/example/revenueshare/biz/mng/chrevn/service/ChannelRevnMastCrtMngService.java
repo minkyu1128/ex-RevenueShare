@@ -36,7 +36,7 @@ public class ChannelRevnMastCrtMngService extends CrudValidServiceTmplate<Respon
         /* ======================================================
          * find data
          ====================================================== */
-        List<ChannelRevnMastCrt> channelRevnMastCrts = channelRevnMastCrtRepository.findAllByDto(searchDTO);
+        List<ChannelRevnMastCrt> channelRevnMastCrts = channelRevnMastCrtRepository.findFetchAllByDto(searchDTO);
 
         /* ======================================================
          * mapping
@@ -82,7 +82,7 @@ public class ChannelRevnMastCrtMngService extends CrudValidServiceTmplate<Respon
                             .calYm(dto.getCalYm())
                             .build())
                     .ifPresent(data -> {
-                        throw new RsException(ErrCd.ERR401, String.format("%s 채널의 %s 수익이 등록되어 있습니다.", data.getContractCreator().getChannel().getChannelNm(), data.getCalYm()));
+                        throw new RsException(ErrCd.ERR401, String.format("%s 채널의 %s년%월 수익이 등록되어 있습니다.", data.getContractCreator().getChannel().getChannelNm(), data.getCalYm().substring(0, 4), data.getCalYm().substring(4)));
                     });
 
     }

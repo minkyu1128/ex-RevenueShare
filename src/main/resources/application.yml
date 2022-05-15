@@ -15,9 +15,6 @@ server:
 spring:
   profiles:
     active: local
-  devtools:
-    livereload:
-      enabled: true
   pid:
     file: ${app.name}.pid
 

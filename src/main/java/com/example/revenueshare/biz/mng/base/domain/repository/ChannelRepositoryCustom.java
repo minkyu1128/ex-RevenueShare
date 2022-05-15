@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ChannelRepositoryCustom {
 
-    List<Channel> findAllByDto(ChannelSearchDTO searchDTO);
+    List<Channel> findFetchAllByDto(ChannelSearchDTO searchDTO);
 }

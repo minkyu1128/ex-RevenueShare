@@ -34,7 +34,7 @@ public class ChannelMngService extends CrudValidServiceTmplate<ResponseVO, Chann
         /* ======================================================
          * find data
          ====================================================== */
-        List<Channel> channels = channelRepository.findAllByDto(searchDTO);
+        List<Channel> channels = channelRepository.findFetchAllByDto(searchDTO);
 
         /* ======================================================
          * mapping

@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface ChannelRevnRepositoryCustom {
 
-    List<ChannelRevn> findAllByDto(ChannelRevnSearchDTO searchDTO);
+    List<ChannelRevn> findFetchAllByDto(ChannelRevnSearchDTO searchDTO);
+
+
+    List<ChannelRevn> findAllByChannelIdAndRevnDeLikeAndDelYn(Long channelId, String revnDe, String delYn);
 }

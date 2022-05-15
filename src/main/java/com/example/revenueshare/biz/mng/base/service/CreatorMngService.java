@@ -1,14 +1,13 @@
 package com.example.revenueshare.biz.mng.base.service;
 
-import com.example.revenueshare.core.exception.ErrCd;
-import com.example.revenueshare.core.exception.RsException;
-import com.example.revenueshare.core.model.ResponseVO;
-import com.example.revenueshare.core.service.CrudServiceTmplate;
 import com.example.revenueshare.biz.mng.base.domain.Creator;
 import com.example.revenueshare.biz.mng.base.domain.repository.CreatorRepository;
 import com.example.revenueshare.biz.mng.base.model.CreatorDTO;
 import com.example.revenueshare.biz.mng.base.model.CreatorSearchDTO;
 import com.example.revenueshare.biz.mng.base.model.mapstruct.CreatorMapper;
+import com.example.revenueshare.core.exception.ErrCd;
+import com.example.revenueshare.core.exception.RsException;
+import com.example.revenueshare.core.model.ResponseVO;
 import com.example.revenueshare.core.service.CrudValidServiceTmplate;
 import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class CreatorMngService extends CrudValidServiceTmplate<ResponseVO, Creat
         /* ======================================================
          * find data
          ====================================================== */
-        List<Creator> creators = creatorRepository.findAllByDto(searchDTO);
+        List<Creator> creators = creatorRepository.findFetchAllByDto(searchDTO);
 
         /* ======================================================
          * mapping

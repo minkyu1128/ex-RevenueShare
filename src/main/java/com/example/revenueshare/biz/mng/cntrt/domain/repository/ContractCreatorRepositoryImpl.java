@@ -19,7 +19,7 @@ public class ContractCreatorRepositoryImpl implements ContractCreatorRepositoryC
     private final JPAQueryFactory query;
 
     @Override
-    public List<ContractCreator> findAllByDto(ContractCreatorSearchDTO searchDTO) {
+    public List<ContractCreator> findFetchAllByDto(ContractCreatorSearchDTO searchDTO) {
         return query.selectFrom(contractCreator)
                 .innerJoin(contractCreator.creator, creator).fetchJoin()
                 .innerJoin(contractCreator.channel, channel).fetchJoin()

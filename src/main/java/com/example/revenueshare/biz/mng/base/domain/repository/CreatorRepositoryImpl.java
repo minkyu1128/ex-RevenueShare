@@ -17,7 +17,7 @@ public class CreatorRepositoryImpl implements CreatorRepositoryCustom {
     private final JPAQueryFactory query;
 
     @Override
-    public List<Creator> findAllByDto(CreatorSearchDTO searchDTO) {
+    public List<Creator> findFetchAllByDto(CreatorSearchDTO searchDTO) {
         return query.selectFrom(creator)
                 .where(dynamicFilter(searchDTO))
                 .fetch();

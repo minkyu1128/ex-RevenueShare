@@ -19,7 +19,7 @@ public class ContractCmpnyRepositoryImpl implements ContractCmpnyRepositoryCusto
     private final JPAQueryFactory query;
 
     @Override
-    public List<ContractCmpny> findAllByDto(ContractCmpnySearchDTO searchDTO) {
+    public List<ContractCmpny> findFetchAllByDto(ContractCmpnySearchDTO searchDTO) {
         return query.selectFrom(contractCmpny)
                 .innerJoin(contractCmpny.cmpny, cmpny).fetchJoin()
                 .innerJoin(contractCmpny.channel, channel).fetchJoin()

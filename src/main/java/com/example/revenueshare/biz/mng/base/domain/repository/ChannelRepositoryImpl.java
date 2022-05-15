@@ -17,7 +17,7 @@ public class ChannelRepositoryImpl implements ChannelRepositoryCustom {
     private final JPAQueryFactory query;
 
     @Override
-    public List<Channel> findAllByDto(ChannelSearchDTO searchDTO) {
+    public List<Channel> findFetchAllByDto(ChannelSearchDTO searchDTO) {
         return query.selectFrom(channel)
                 .where(channel.useYn.eq("Y")
                         .and(dynamicFilter(searchDTO))

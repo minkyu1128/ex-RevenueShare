@@ -40,7 +40,7 @@ public class ContractCmpnyMngService extends CrudValidServiceTmplate<ResponseVO,
         /* ======================================================
          * find data
          ====================================================== */
-        List<ContractCmpny> contractCmpnys = contractCmpnyRepository.findAllByDto(searchDTO);
+        List<ContractCmpny> contractCmpnys = contractCmpnyRepository.findFetchAllByDto(searchDTO);
 
         /* ======================================================
          * mapping

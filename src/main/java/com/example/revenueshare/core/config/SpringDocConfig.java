@@ -67,6 +67,26 @@ public class SpringDocConfig {
                 .build();
     }
 
+    @Bean
+    public GroupedOpenApi revnSettleApiDoc() {
+        return GroupedOpenApi.builder()
+                .group("4.수익정산")
+                .pathsToMatch(
+                        "/revn/settle/**"
+                )
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi revnFindApiDoc() {
+        return GroupedOpenApi.builder()
+                .group("5.수익 조회")
+                .pathsToMatch(
+                        "/revn/fnd/**"
+                )
+                .build();
+    }
+
 
 
 }

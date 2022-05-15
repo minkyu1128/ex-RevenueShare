@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ContractCreatorRepositoryCustom {
 
-    List<ContractCreator> findAllByDto(ContractCreatorSearchDTO searchDTO);
+    List<ContractCreator> findFetchAllByDto(ContractCreatorSearchDTO searchDTO);
 }

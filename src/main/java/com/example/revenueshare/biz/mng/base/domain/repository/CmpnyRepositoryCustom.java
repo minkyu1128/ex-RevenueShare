@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CmpnyRepositoryCustom {
 
-    List<Cmpny> findAllByDto(CmpnySearchDTO searchDTO);
+    List<Cmpny> findFetchAllByDto(CmpnySearchDTO searchDTO);
 }

@@ -1,14 +1,13 @@
 package com.example.revenueshare.biz.mng.base.service;
 
-import com.example.revenueshare.biz.mng.base.model.mapstruct.CmpnyMapper;
-import com.example.revenueshare.core.exception.ErrCd;
-import com.example.revenueshare.core.exception.RsException;
-import com.example.revenueshare.core.model.ResponseVO;
-import com.example.revenueshare.core.service.CrudServiceTmplate;
 import com.example.revenueshare.biz.mng.base.domain.Cmpny;
 import com.example.revenueshare.biz.mng.base.domain.repository.CmpnyRepository;
 import com.example.revenueshare.biz.mng.base.model.CmpnyDTO;
 import com.example.revenueshare.biz.mng.base.model.CmpnySearchDTO;
+import com.example.revenueshare.biz.mng.base.model.mapstruct.CmpnyMapper;
+import com.example.revenueshare.core.exception.ErrCd;
+import com.example.revenueshare.core.exception.RsException;
+import com.example.revenueshare.core.model.ResponseVO;
 import com.example.revenueshare.core.service.CrudValidServiceTmplate;
 import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class CmpnyMngService extends CrudValidServiceTmplate<ResponseVO, CmpnySe
         /* ======================================================
          * find data
          ====================================================== */
-        List<Cmpny> cmpnys = cmpnyRepository.findAllByDto(searchDTO);
+        List<Cmpny> cmpnys = cmpnyRepository.findFetchAllByDto(searchDTO);
 
         /* ======================================================
          * mapping

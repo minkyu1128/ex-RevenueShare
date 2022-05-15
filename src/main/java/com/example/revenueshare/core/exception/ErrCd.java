@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrCd implements CodeMapperType {
 
     OK("정상", HttpStatus.OK)
+    , UNKNOWN("알수없는 오류", HttpStatus.INTERNAL_SERVER_ERROR)
 
 
     , ERR400("Client 요청 오류", HttpStatus.BAD_REQUEST)
@@ -19,6 +20,7 @@ public enum ErrCd implements CodeMapperType {
 
     , ERR500("Server 오류", HttpStatus.INTERNAL_SERVER_ERROR)
     , ERR501("처리 불가", HttpStatus.INTERNAL_SERVER_ERROR)
+    , ERR502("금액 계산 오류", HttpStatus.INTERNAL_SERVER_ERROR)
 
 
     , ERR600("API 오류", HttpStatus.BAD_GATEWAY)

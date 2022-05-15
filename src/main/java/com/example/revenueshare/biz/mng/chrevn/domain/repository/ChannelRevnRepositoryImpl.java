@@ -14,15 +14,24 @@ import static com.example.revenueshare.biz.mng.chrevn.domain.QChannelRevn.channe
 
 @RequiredArgsConstructor
 public class ChannelRevnRepositoryImpl implements ChannelRevnRepositoryCustom {
-    
+
     private final JPAQueryFactory query;
 
     @Override
-    public List<ChannelRevn> findAllByDto(ChannelRevnSearchDTO searchDTO) {
+    public List<ChannelRevn> findFetchAllByDto(ChannelRevnSearchDTO searchDTO) {
         return query.selectFrom(channelRevn)
                 .innerJoin(channelRevn.channel, channel).fetchJoin()
                 .where(dynamicFilter(searchDTO)
                         .and(channelRevn.delYn.eq("N")))
+                .fetch();
+    }
+
+    @Override
+    public List<ChannelRevn> findAllByChannelIdAndRevnDeLikeAndDelYn(Long channelId, String revnDe, String delYn) {
+        return query.selectFrom(channelRevn)
+                .where(channelRevn.channel.channelId.eq(channelId)
+                        .and(channelRevn.revnDe.like(revnDe + "%")
+                                .and(channelRevn.delYn.eq(delYn))))
                 .fetch();
     }
 

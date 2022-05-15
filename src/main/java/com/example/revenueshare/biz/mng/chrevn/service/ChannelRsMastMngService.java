@@ -38,7 +38,7 @@ public class ChannelRsMastMngService extends CrudValidServiceTmplate<ResponseVO,
         /* ======================================================
          * find data
          ====================================================== */
-        List<ChannelRsMast> channelRsMasts = channelRsMastRepository.findAllByDto(searchDTO);
+        List<ChannelRsMast> channelRsMasts = channelRsMastRepository.findFetchAllByDto(searchDTO);
 
         /* ======================================================
          * mapping
@@ -79,7 +79,7 @@ public class ChannelRsMastMngService extends CrudValidServiceTmplate<ResponseVO,
         channelRepository.findById(dto.getChannelId())
                 .orElseThrow(() -> new RsException(ErrCd.ERR401, String.format("등록되지 않은 채널(%d) 입니다.", dto.getChannelId())));
         if(Integer.parseInt(dto.getCalYm()) > Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM"))))
-            throw new RsException(ErrCd.ERR401, String.format("\"%s년 %s월\" 채널 수익대장을 미리 등록 할 수 없습니다.", dto.getCalYm().substring(0, 4), dto.getCalYm().substring(4)));
+            throw new RsException(ErrCd.ERR401, String.format("\"%s년%s월\" 채널 수익대장을 미리 등록 할 수 없습니다.", dto.getCalYm().substring(0, 4), dto.getCalYm().substring(4)));
         if (type.equals(ValidateType.C))
             channelRsMastRepository.findById(ChannelRsMastIds.builder()
                             .channel(dto.getChannelId())

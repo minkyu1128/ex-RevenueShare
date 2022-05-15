@@ -39,7 +39,7 @@ public class ChannelRevnMngService extends CrudValidServiceTmplate<ResponseVO, C
         /* ======================================================
          * find data
          ====================================================== */
-        List<ChannelRevn> channelRevns = channelRevnRepository.findAllByDto(searchDTO);
+        List<ChannelRevn> channelRevns = channelRevnRepository.findFetchAllByDto(searchDTO);
 
         /* ======================================================
          * mapping

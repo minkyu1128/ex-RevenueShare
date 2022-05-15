@@ -17,7 +17,7 @@ public class CmpnyRepositoryImpl implements CmpnyRepositoryCustom {
     private final JPAQueryFactory query;
 
     @Override
-    public List<Cmpny> findAllByDto(CmpnySearchDTO searchDTO) {
+    public List<Cmpny> findFetchAllByDto(CmpnySearchDTO searchDTO) {
         return query.selectFrom(cmpny)
                 .where(dynamicFilter(searchDTO))
                 .fetch();

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CreatorRepositoryCustom {
 
-    List<Creator> findAllByDto(CreatorSearchDTO searchDTO);
+    List<Creator> findFetchAllByDto(CreatorSearchDTO searchDTO);
 }

@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class ChannelRevnMastCmp extends BaseEntity {
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cntr_cmp_id")
     private ContractCmpny contractCmpny;
 
