@@ -89,7 +89,7 @@ public class ChannelRevnMngService extends CrudValidServiceTmplate<ResponseVO, C
     }
 
     @Override
-    protected void addProc(ChannelRevnDTO dto) {
+    protected ResponseVO<Long> addProc(ChannelRevnDTO dto) {
 
         /* ======================================================
          * conversion
@@ -102,6 +102,9 @@ public class ChannelRevnMngService extends CrudValidServiceTmplate<ResponseVO, C
          * save
          ====================================================== */
         channelRevnRepository.save(channelRevn);
+
+
+        return ResponseVO.<Long>okBuilder().resultInfo(channelRevn.getChRevnId()).build();
     }
 
     @Override

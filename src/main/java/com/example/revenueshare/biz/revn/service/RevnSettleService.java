@@ -37,9 +37,8 @@ public class RevnSettleService extends OnlyCreateServiceTmplate<ResponseVO, Stri
     private final ChannelRevnMastCrtMngService channelRevnMastCrtMngService;
 
 
-
     @Override
-    protected void addProc(RevnSettleDTO dto) {
+    protected ResponseVO<ChannelRsMastIds> addProc(RevnSettleDTO dto) {
         /* =================================================
         * 채널 월 총수익금 등록
         ================================================= */
@@ -76,6 +75,12 @@ public class RevnSettleService extends OnlyCreateServiceTmplate<ResponseVO, Stri
         * save
         ================================================= */
         channelRsMastRepository.save(channelRsMast);
+
+
+        return ResponseVO.<ChannelRsMastIds>okBuilder().resultInfo(ChannelRsMastIds.builder()
+                .channel(channelRsMast.getChannel().getChannelId())
+                .calYm(channelRsMast.getCalYm())
+                .build()).build();
     }
 
     @Override

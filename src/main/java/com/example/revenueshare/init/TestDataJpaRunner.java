@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-@Component
+//@Component
 @Transactional
 public class TestDataJpaRunner implements ApplicationRunner {
 

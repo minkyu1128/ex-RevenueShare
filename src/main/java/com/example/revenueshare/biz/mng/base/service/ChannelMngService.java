@@ -1,14 +1,13 @@
 package com.example.revenueshare.biz.mng.base.service;
 
-import com.example.revenueshare.biz.mng.base.model.mapstruct.ChannelMapper;
-import com.example.revenueshare.core.exception.ErrCd;
-import com.example.revenueshare.core.exception.RsException;
-import com.example.revenueshare.core.model.ResponseVO;
-import com.example.revenueshare.core.service.CrudServiceTmplate;
 import com.example.revenueshare.biz.mng.base.domain.Channel;
 import com.example.revenueshare.biz.mng.base.domain.repository.ChannelRepository;
 import com.example.revenueshare.biz.mng.base.model.ChannelDTO;
 import com.example.revenueshare.biz.mng.base.model.ChannelSearchDTO;
+import com.example.revenueshare.biz.mng.base.model.mapstruct.ChannelMapper;
+import com.example.revenueshare.core.exception.ErrCd;
+import com.example.revenueshare.core.exception.RsException;
+import com.example.revenueshare.core.model.ResponseVO;
 import com.example.revenueshare.core.service.CrudValidServiceTmplate;
 import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +79,7 @@ public class ChannelMngService extends CrudValidServiceTmplate<ResponseVO, Chann
     }
 
     @Override
-    protected void addProc(ChannelDTO dto) {
+    protected ResponseVO<Long> addProc(ChannelDTO dto) {
 
         /* ======================================================
          * conversion
@@ -93,6 +92,9 @@ public class ChannelMngService extends CrudValidServiceTmplate<ResponseVO, Chann
         channel.setCloseDe(null);
         channel.setUseYn("Y");
         channelRepository.save(channel);
+
+
+        return ResponseVO.<Long>okBuilder().resultInfo(channel.getChannelId()).build();
     }
 
     @Override

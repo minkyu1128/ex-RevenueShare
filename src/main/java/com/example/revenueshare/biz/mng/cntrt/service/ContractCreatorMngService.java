@@ -97,7 +97,7 @@ public class ContractCreatorMngService extends CrudValidServiceTmplate<ResponseV
     }
 
     @Override
-    protected void addProc(ContractCreatorDTO dto) {
+    protected ResponseVO<Long> addProc(ContractCreatorDTO dto) {
 
         /* ======================================================
          * conversion
@@ -109,6 +109,9 @@ public class ContractCreatorMngService extends CrudValidServiceTmplate<ResponseV
          * save
          ====================================================== */
         contractCreatorRepository.save(contractCreator);
+
+
+        return ResponseVO.<Long>okBuilder().resultInfo(contractCreator.getCntrCrtId()).build();
     }
 
     @Override

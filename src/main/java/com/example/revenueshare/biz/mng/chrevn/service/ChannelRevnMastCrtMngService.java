@@ -88,7 +88,7 @@ public class ChannelRevnMastCrtMngService extends CrudValidServiceTmplate<Respon
     }
 
     @Override
-    protected void addProc(ChannelRevnMastCrtDTO dto) {
+    protected ResponseVO<ChannelRevenueMastCrtIds> addProc(ChannelRevnMastCrtDTO dto) {
 
         /* ======================================================
          * conversion
@@ -99,6 +99,13 @@ public class ChannelRevnMastCrtMngService extends CrudValidServiceTmplate<Respon
          * save
          ====================================================== */
         channelRevnMastCrtRepository.save(channelRevnMastCrt);
+
+
+        return ResponseVO.<ChannelRevenueMastCrtIds>okBuilder().resultInfo(ChannelRevenueMastCrtIds.builder()
+                        .contractCreator(channelRevnMastCrt.getContractCreator().getCntrCrtId())
+                        .calYm(channelRevnMastCrt.getCalYm())
+                        .build())
+                .build();
     }
 
     @Override

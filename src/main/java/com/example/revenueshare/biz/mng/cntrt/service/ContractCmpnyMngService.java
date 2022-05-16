@@ -97,7 +97,7 @@ public class ContractCmpnyMngService extends CrudValidServiceTmplate<ResponseVO,
     }
 
     @Override
-    protected void addProc(ContractCmpnyDTO dto) {
+    protected ResponseVO<Long> addProc(ContractCmpnyDTO dto) {
         /* ======================================================
          * conversion
          ====================================================== */
@@ -108,6 +108,9 @@ public class ContractCmpnyMngService extends CrudValidServiceTmplate<ResponseVO,
          * save
          ====================================================== */
         contractCmpnyRepository.save(contractCmpny);
+
+
+        return ResponseVO.<Long>okBuilder().resultInfo(contractCmpny.getCntrCmpId()).build();
     }
 
     @Override

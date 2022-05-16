@@ -80,7 +80,7 @@ public class CreatorMngService extends CrudValidServiceTmplate<ResponseVO, Creat
     }
 
     @Override
-    protected void addProc(CreatorDTO dto) {
+    protected ResponseVO<Long> addProc(CreatorDTO dto) {
 
         /* ======================================================
          * conversion
@@ -91,6 +91,9 @@ public class CreatorMngService extends CrudValidServiceTmplate<ResponseVO, Creat
          * save
          ====================================================== */
         creatorRepository.save(creator);
+
+
+        return ResponseVO.<Long>okBuilder().resultInfo(creator.getCreatorId()).build();
     }
 
     @Override

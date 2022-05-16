@@ -80,7 +80,7 @@ public class CmpnyMngService extends CrudValidServiceTmplate<ResponseVO, CmpnySe
     }
 
     @Override
-    protected void addProc(CmpnyDTO dto) {
+    protected ResponseVO<Long> addProc(CmpnyDTO dto) {
 
         /* ======================================================
          * conversion
@@ -91,6 +91,9 @@ public class CmpnyMngService extends CrudValidServiceTmplate<ResponseVO, CmpnySe
          * save
          ====================================================== */
         cmpnyRepository.save(cmpny);
+
+
+        return ResponseVO.<Long>okBuilder().resultInfo(cmpny.getCmpnyId()).build();
     }
 
     @Override

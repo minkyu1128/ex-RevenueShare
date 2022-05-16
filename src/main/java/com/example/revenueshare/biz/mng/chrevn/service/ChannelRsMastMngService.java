@@ -78,7 +78,7 @@ public class ChannelRsMastMngService extends CrudValidServiceTmplate<ResponseVO,
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
         channelRepository.findById(dto.getChannelId())
                 .orElseThrow(() -> new RsException(ErrCd.ERR401, String.format("등록되지 않은 채널(%d) 입니다.", dto.getChannelId())));
-        if(Integer.parseInt(dto.getCalYm()) > Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM"))))
+        if (Integer.parseInt(dto.getCalYm()) > Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM"))))
             throw new RsException(ErrCd.ERR401, String.format("\"%s년%s월\" 채널 수익대장을 미리 등록 할 수 없습니다.", dto.getCalYm().substring(0, 4), dto.getCalYm().substring(4)));
         if (type.equals(ValidateType.C))
             channelRsMastRepository.findById(ChannelRsMastIds.builder()
@@ -92,7 +92,7 @@ public class ChannelRsMastMngService extends CrudValidServiceTmplate<ResponseVO,
     }
 
     @Override
-    protected void addProc(ChannelRsMastDTO dto) {
+    protected ResponseVO<ChannelRsMastIds> addProc(ChannelRsMastDTO dto) {
 
         /* ======================================================
          * conversion
@@ -105,6 +105,13 @@ public class ChannelRsMastMngService extends CrudValidServiceTmplate<ResponseVO,
         channelRsMast.setChannelAmt(0L);
         channelRsMast.setBalanceAmt(0L);
         channelRsMastRepository.save(channelRsMast);
+
+
+        return ResponseVO.<ChannelRsMastIds>okBuilder().resultInfo(ChannelRsMastIds.builder()
+                        .channel(channelRsMast.getChannel().getChannelId())
+                        .calYm(channelRsMast.getCalYm())
+                        .build())
+                .build();
     }
 
     @Override
