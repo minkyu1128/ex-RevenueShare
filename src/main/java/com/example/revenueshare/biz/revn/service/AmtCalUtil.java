@@ -1,4 +1,4 @@
-package com.example.revenueshare.biz.revnsett.service;
+package com.example.revenueshare.biz.revn.service;
 
 public class AmtCalUtil {
 

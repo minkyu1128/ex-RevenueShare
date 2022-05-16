@@ -1,7 +1,7 @@
-package com.example.revenueshare.biz.revnsett.presentation;
+package com.example.revenueshare.biz.revn.presentation;
 
-import com.example.revenueshare.biz.revnsett.model.RevnSettleDTO;
-import com.example.revenueshare.biz.revnsett.service.RevnSettleService;
+import com.example.revenueshare.biz.revn.model.RevnSettleDTO;
+import com.example.revenueshare.biz.revn.service.RevnSettleService;
 import com.example.revenueshare.core.exception.RsException;
 import com.example.revenueshare.core.model.ResponseVO;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,5 +1,6 @@
 package com.example.revenueshare.init;
 
+import com.example.revenueshare.biz.mng.base.code.RevnSeCd;
 import com.example.revenueshare.biz.mng.base.domain.repository.CmpnyRepository;
 import com.example.revenueshare.biz.mng.base.model.*;
 import com.example.revenueshare.biz.mng.base.service.ChannelMngService;
@@ -11,8 +12,8 @@ import com.example.revenueshare.biz.mng.cntrt.model.ContractCmpnyDTO;
 import com.example.revenueshare.biz.mng.cntrt.model.ContractCreatorDTO;
 import com.example.revenueshare.biz.mng.cntrt.service.ContractCmpnyMngService;
 import com.example.revenueshare.biz.mng.cntrt.service.ContractCreatorMngService;
-import com.example.revenueshare.biz.revnsett.model.RevnSettleDTO;
-import com.example.revenueshare.biz.revnsett.service.RevnSettleService;
+import com.example.revenueshare.biz.revn.model.RevnSettleDTO;
+import com.example.revenueshare.biz.revn.service.RevnSettleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -62,6 +64,7 @@ public class TestDataJpaRunner implements ApplicationRunner {
 
 
     @Override
+    @Transactional
     public void run(ApplicationArguments args) throws Exception {
         /* ======================================================
         * 기초데이터 등록
@@ -88,19 +91,19 @@ public class TestDataJpaRunner implements ApplicationRunner {
         * 채널수익 등록
         ====================================================== */
         //일별 채널수익 등록
-        createChannelRevnDTO().forEach(data -> channelRevnMngService.add(data));
+        channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
+                .forEach(row -> createChannelRevnDTO(row.getChannelId()).forEach(data -> channelRevnMngService.add(data)));
 
         /* ======================================================
         * 채널수익 정산
         ====================================================== */
         //채널수익정산(회사 및 크리에이터)
-        createRevnSettleDTO().forEach(data -> revnSettleService.add(data));
+        channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
+                .forEach(row -> createRevnSettleDTO(row.getChannelId()).forEach(data -> revnSettleService.add(data)));
 
 
         System.out.println("============================================================================================================");
         System.out.println("======== Initailize Information [OrgMng & TmpltMng] :: active profiles - " + System.getProperty("spring.profiles.active") + " ========");
-        System.out.println(orgMngResult.toString());
-        System.out.println(tmpltMngResult.toString());
         System.out.println("============================================================================================================");
     }
 
@@ -138,7 +141,7 @@ public class TestDataJpaRunner implements ApplicationRunner {
     private List<ContractCreatorDTO> createContractCreatorDTO(Long channelId, List<CreatorDTO> creators) {
         List<ContractCreatorDTO> list = new ArrayList<>();
 
-        for (CreatorDTO dto : creators){
+        for (CreatorDTO dto : creators) {
             String openDe = LocalDateTime.now().minusDays(365).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             Integer rsRate = 100 / creators.size();
             list.add(initContractCreatorDTO(dto.getCreatorId(), channelId, openDe, rsRate));
@@ -147,19 +150,28 @@ public class TestDataJpaRunner implements ApplicationRunner {
         return list;
     }
 
-    private List<ChannelRevnDTO> createChannelRevnDTO(List<ChannelDTO> channels, String yyyy) {
+    private List<ChannelRevnDTO> createChannelRevnDTO(Long channelId) {
+        List<String> years = Arrays.asList("2021", "2022");
+
         List<ChannelRevnDTO> list = new ArrayList<>();
 
-        for(ChannelDTO dto : channels){
-            Long channelId, String revnDe, String revnSeCd, Long revnAmt
-            list.add(initChannelRevnDTO(dto.getChannelId(), yyyy+""));
-        }
+        for (String yyyy : years)
+            for (int i = 0; i < 1000; i++)
+                list.add(initChannelRevnDTO(channelId, yyyy + randomDay(), RevnSeCd.HITS.getCode(), randomMoney()));
+
         return list;
     }
 
-    private List<RevnSettleDTO> createRevnSettleDTO() {
+    private List<RevnSettleDTO> createRevnSettleDTO(Long channelId) {
+        List<String> years = Arrays.asList("2021", "2022");
+        List<String> months = Arrays.asList("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
+
         List<RevnSettleDTO> list = new ArrayList<>();
-        list.add(RevnSettleDTO.builder().build());
+
+        for (String yyyy : years)
+            for (String mm : months)
+                list.add(initRevnSettleDTO(channelId, yyyy + mm));
+
         return list;
     }
 
@@ -223,6 +235,49 @@ public class TestDataJpaRunner implements ApplicationRunner {
                 .channelId(channelId)
                 .calYm(calYm)
                 .build();
+    }
+
+
+    private String randomDay() {
+        int iMinMonth = 1;
+        int iMaxMonth = 12;
+        int iMinDay = 1;
+        int iMaxDay = 31;
+
+        int iRandomMonth = (int) (Math.random() * iMaxMonth - iMinMonth + 1) + iMinMonth;
+        int iRandomDay = 0;
+
+        switch (iRandomMonth) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                iRandomDay = (int) (Math.random() * iMaxDay - iMinDay + 1) + iMinDay; //최대 31일
+                break;
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                iRandomDay = (int) (Math.random() * (iMaxDay - 1) - (iMinDay) + 1) + iMinDay; //최대 30일
+                break;
+            case 2:
+                iRandomDay = (int) (Math.random() * (iMaxDay - 3) - (iMinDay) + 1) + iMinDay; //최대 28일
+                break;
+            default:
+                return randomDay();
+        }
+
+        return String.format("%02d%02d", iRandomMonth, iRandomDay);
+    }
+
+
+    private long randomMoney() {
+        int min = 10000;
+        int max = 10000000;
+        return (long) (Math.floor(Math.random() * (min - max + 1)) + min)*-1;
     }
 
 

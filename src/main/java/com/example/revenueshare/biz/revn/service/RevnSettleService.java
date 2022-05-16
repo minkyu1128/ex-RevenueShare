@@ -1,4 +1,4 @@
-package com.example.revenueshare.biz.revnsett.service;
+package com.example.revenueshare.biz.revn.service;
 
 import com.example.revenueshare.biz.mng.base.domain.Channel;
 import com.example.revenueshare.biz.mng.base.domain.repository.ChannelRepository;
@@ -14,7 +14,7 @@ import com.example.revenueshare.biz.mng.cntrt.domain.ContractCmpny;
 import com.example.revenueshare.biz.mng.cntrt.domain.ContractCreator;
 import com.example.revenueshare.biz.mng.cntrt.domain.repository.ContractCmpnyRepository;
 import com.example.revenueshare.biz.mng.cntrt.domain.repository.ContractCreatorRepository;
-import com.example.revenueshare.biz.revnsett.model.RevnSettleDTO;
+import com.example.revenueshare.biz.revn.model.RevnSettleDTO;
 import com.example.revenueshare.core.exception.ErrCd;
 import com.example.revenueshare.core.exception.RsException;
 import com.example.revenueshare.core.model.ResponseVO;

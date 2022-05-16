@@ -1,7 +1,7 @@
-package com.example.revenueshare.biz.revnsett.presentation;
+package com.example.revenueshare.biz.revn.presentation;
 
-import com.example.revenueshare.biz.revnsett.model.RevnFndSearchDTO;
-import com.example.revenueshare.biz.revnsett.service.RevnFndService;
+import com.example.revenueshare.biz.revn.model.RevnFndSearchDTO;
+import com.example.revenueshare.biz.revn.service.RevnFndService;
 import com.example.revenueshare.core.exception.RsException;
 import com.example.revenueshare.core.model.ResponseVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +42,17 @@ public class RevnFndController {
     public ResponseEntity findAllByCmpny(RevnFndSearchDTO searchDTO) {
         try {
             List<Map<String, Object>> resultInfo = revnFndService.findAllByCmpny(searchDTO);
+
+            return new ResponseEntity<ResponseVO>(ResponseVO.okBuilder().resultInfo(resultInfo).build(), HttpStatus.OK);
+        } catch (RsException e) {
+            return new ResponseEntity(ResponseVO.errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).build(), e.getErrCd().getStatus());
+        }
+    }
+    @Operation(summary = "회사 기준 수익금액 합계 조회", description = " ")
+    @GetMapping(value = "/revn/fnd/cmpny/amtsum", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity findAllByCmpnyAmtSum(RevnFndSearchDTO searchDTO) {
+        try {
+            List<Map<String, Object>> resultInfo = revnFndService.findAllSumByCmpny(searchDTO);
 
             return new ResponseEntity<ResponseVO>(ResponseVO.okBuilder().resultInfo(resultInfo).build(), HttpStatus.OK);
         } catch (RsException e) {

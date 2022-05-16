@@ -2,7 +2,7 @@ package com.example.revenueshare.biz.mng.chrevn.domain.repository;
 
 import com.example.revenueshare.biz.mng.chrevn.domain.ChannelRevnMastCrt;
 import com.example.revenueshare.biz.mng.chrevn.model.ChannelRevnMastCrtSearchDTO;
-import com.example.revenueshare.biz.revnsett.model.RevnFndSearchDTO;
+import com.example.revenueshare.biz.revn.model.RevnFndSearchDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static com.example.revenueshare.biz.mng.base.domain.QChannel.channel;
 import static com.example.revenueshare.biz.mng.chrevn.domain.QChannelRevnMastCrt.channelRevnMastCrt;
+import static com.example.revenueshare.biz.mng.chrevn.domain.QChannelRsMast.channelRsMast;
 import static com.example.revenueshare.biz.mng.cntrt.domain.QContractCreator.contractCreator;
 
 @RequiredArgsConstructor
@@ -44,6 +45,8 @@ public class ChannelRevnMastCrtRepositoryImpl implements ChannelRevnMastCrtRepos
                 .where(filterByRevnSettleFndSearchDTO(searchDTO))
                 .groupBy(channelRevnMastCrt.contractCreator.channel.channelId
                         , channelRevnMastCrt.contractCreator.channel.channelNm
+                        , channelRevnMastCrt.contractCreator.creator.creatorId
+                        , channelRevnMastCrt.contractCreator.creator.creatorNm
                         , channelRevnMastCrt.calYm
                         , channelRevnMastCrt.calAmt)
                 .orderBy(channelRevnMastCrt.contractCreator.channel.channelNm.asc()
@@ -68,8 +71,10 @@ public class ChannelRevnMastCrtRepositoryImpl implements ChannelRevnMastCrtRepos
     private BooleanBuilder filterByRevnSettleFndSearchDTO(RevnFndSearchDTO searchDTO) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (!(StringUtils.isEmpty(searchDTO.getSearchCalYmFrom()) || StringUtils.isEmpty(searchDTO.getSearchCalYmTo())))
-            builder.and(channelRevnMastCrt.calYm.between(searchDTO.getSearchCalYmFrom(), searchDTO.getSearchCalYmTo()));
+        if (!(StringUtils.isEmpty(searchDTO.getSchCalYmFrom()) || StringUtils.isEmpty(searchDTO.getSchCalYmTo())))
+            builder.and(channelRevnMastCrt.calYm.between(searchDTO.getSchCalYmFrom(), searchDTO.getSchCalYmTo()));
+        if(!StringUtils.isEmpty(searchDTO.getSchChannelNm()))
+            builder.and(channelRevnMastCrt.contractCreator.channel.channelNm.like(searchDTO.getSchChannelNm()+"%"));
 
         return builder;
     }

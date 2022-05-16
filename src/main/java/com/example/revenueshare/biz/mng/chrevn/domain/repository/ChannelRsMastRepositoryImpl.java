@@ -2,7 +2,7 @@ package com.example.revenueshare.biz.mng.chrevn.domain.repository;
 
 import com.example.revenueshare.biz.mng.chrevn.domain.ChannelRsMast;
 import com.example.revenueshare.biz.mng.chrevn.model.ChannelRsMastSearchDTO;
-import com.example.revenueshare.biz.revnsett.model.RevnFndSearchDTO;
+import com.example.revenueshare.biz.revn.model.RevnFndSearchDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +34,7 @@ public class ChannelRsMastRepositoryImpl implements ChannelRsMastRepositoryCusto
     @Override
     public List<Map<String, Object>> findRevnSettleBySearchDto(RevnFndSearchDTO searchDTO) {
         return query.select(channelRsMast.channel.channelId
+                        , channelRsMast.channel.channelNm
                         , channelRsMast.calYm
                         , channelRsMast.channelAmt
                         , channelRevnMastCrt.contractCreator.creator.creatorId
@@ -47,17 +48,20 @@ public class ChannelRsMastRepositoryImpl implements ChannelRsMastRepositoryCusto
                 .innerJoin(channelRevnMastCrt).on(contractCreator.cntrCrtId.eq(channelRevnMastCrt.contractCreator.cntrCrtId).and(channelRevnMastCrt.calYm.eq(channelRsMast.calYm)))
                 .where(filterByRevnSettleFndSearchDTO(searchDTO))
                 .groupBy(channelRsMast.channel.channelId
+                        , channelRsMast.channel.channelNm
                         , channelRsMast.calYm
                         , channelRsMast.channelAmt
                         , channelRevnMastCrt.contractCreator.creator.creatorId
                         , channelRevnMastCrt.contractCreator.creator.creatorNm
                         , channelRevnMastCrt.contractCreator.rsRate
                         , channelRevnMastCrt.calAmt)
+                .orderBy(channelRsMast.channel.channelNm.asc(), channelRsMast.calYm.desc(), channelRevnMastCrt.contractCreator.creator.creatorNm.asc())
                 .fetch()
                 .stream()
                 .map(tuple -> {
                     Map<String, Object> result = new HashMap<>();
                     result.put("channelId", tuple.get(channelRsMast.channel.channelId));
+                    result.put("channelNm", tuple.get(channelRsMast.channel.channelNm));
                     result.put("calYm", tuple.get(channelRsMast.calYm));
                     result.put("channelAmt", tuple.get(channelRsMast.channelAmt));
                     result.put("creatorId", tuple.get(channelRevnMastCrt.contractCreator.creator.creatorId));
@@ -73,8 +77,10 @@ public class ChannelRsMastRepositoryImpl implements ChannelRsMastRepositoryCusto
     private BooleanBuilder filterByRevnSettleFndSearchDTO(RevnFndSearchDTO searchDTO) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (!(StringUtils.isEmpty(searchDTO.getSearchCalYmFrom()) || StringUtils.isEmpty(searchDTO.getSearchCalYmTo())))
-            builder.and(channelRsMast.calYm.between(searchDTO.getSearchCalYmFrom(), searchDTO.getSearchCalYmTo()));
+        if (!(StringUtils.isEmpty(searchDTO.getSchCalYmFrom()) || StringUtils.isEmpty(searchDTO.getSchCalYmTo())))
+            builder.and(channelRsMast.calYm.between(searchDTO.getSchCalYmFrom(), searchDTO.getSchCalYmTo()));
+        if(!StringUtils.isEmpty(searchDTO.getSchChannelNm()))
+            builder.and(channelRsMast.channel.channelNm.like(searchDTO.getSchChannelNm()+"%"));
 
         return builder;
     }

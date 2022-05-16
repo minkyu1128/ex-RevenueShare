@@ -2,7 +2,7 @@ package com.example.revenueshare.biz.mng.chrevn.domain.repository;
 
 import com.example.revenueshare.biz.mng.chrevn.domain.ChannelRsMast;
 import com.example.revenueshare.biz.mng.chrevn.model.ChannelRsMastSearchDTO;
-import com.example.revenueshare.biz.revnsett.model.RevnFndSearchDTO;
+import com.example.revenueshare.biz.revn.model.RevnFndSearchDTO;
 
 
 import java.util.List;

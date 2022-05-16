@@ -1,4 +1,4 @@
-package com.example.revenueshare.biz.revnsett.model;
+package com.example.revenueshare.biz.revn.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -13,9 +13,11 @@ public class RevnFndSearchDTO {
 
 
     @Pattern(regexp = "^\\d{4}(0[1-9]|1[012])$", message = "정산년월의 입력패턴(yyyyMM)이 유효하지 않습니다.")
-    @Schema(required = true, title = "정산년월 시작", example = "202205", description = "년월(yyyyMM 포맷)")
-    private String searchCalYmFrom;
+    @Schema(required = false, title = "정산년월 시작", example = "202205", description = "년월(yyyyMM 포맷)")
+    private String schCalYmFrom;
     @Pattern(regexp = "^\\d{4}(0[1-9]|1[012])$", message = "정산년월의 입력패턴(yyyyMM)이 유효하지 않습니다.")
-    @Schema(required = true, title = "정산년월 종료", example = "202205", description = "년월(yyyyMM 포맷)")
-    private String searchCalYmTo;
+    @Schema(required = false, title = "정산년월 종료", example = "202205", description = "년월(yyyyMM 포맷)")
+    private String schCalYmTo;
+    @Schema(required = false, title = "채널명", example = " ", description = "")
+    private String schChannelNm;
 }
