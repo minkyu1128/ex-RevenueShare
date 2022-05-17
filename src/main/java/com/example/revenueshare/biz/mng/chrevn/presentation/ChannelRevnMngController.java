@@ -51,9 +51,10 @@ public class ChannelRevnMngController {
     @PostMapping(value = "/mng/ch/revn", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity add(@RequestBody ChannelRevnDTO dto) {
         try {
-            channelRevnMngService.add(dto);
+            ResponseVO responseVO = channelRevnMngService.add(dto);
 
-            return new ResponseEntity<ResponseVO>(ResponseVO.okBuilder().build(), HttpStatus.OK);
+//            return new ResponseEntity<ResponseVO>(ResponseVO.okBuilder().build(), HttpStatus.OK);
+            return new ResponseEntity<ResponseVO>(responseVO, responseVO.getErrCd().getStatus());
         } catch (RsException e) {
             return new ResponseEntity(ResponseVO.errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).resultInfo(e.getData()).build(), e.getErrCd().getStatus());
         }

@@ -1,7 +1,6 @@
-package com.example.revenueshare.ctgy.base.service;
+package com.example.revenueshare.biz.mng.base.service;
 
-import com.example.revenueshare.biz.mng.base.model.CreatorDTO;
-import com.example.revenueshare.biz.mng.base.service.CreatorMngService;
+import com.example.revenueshare.biz.mng.base.model.CmpnyDTO;
 import com.example.revenueshare.core.exception.ErrCd;
 import com.example.revenueshare.core.exception.RsException;
 import com.example.revenueshare.core.model.ResponseVO;
@@ -16,29 +15,29 @@ import java.util.Date;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles({"test"})
-class CreatorMngServiceTest {
+class CmpnyMngServiceTest {
 
     @Autowired
-    private CreatorMngService creatorMngService;
+    private CmpnyMngService cmpnyMngService;
 
-    private String CREATOR_NM;
-    private Long CREATOR_ID;
+    private String CMPNY_NM;
+    private Long CMPNY_ID;
 
     @Test
-    @DisplayName("[성공 케이스]: 크리에이터 등록")
+    @DisplayName("[성공 케이스]: 회사 등록")
     @Order(1)
     void addSuccess() {
         //given
-        this.CREATOR_NM = "시온파파_"+(new Date().getTime()/1000);
-        CreatorDTO creatorDTO = CreatorDTO.builder()
-                .creatorNm(this.CREATOR_NM)
+        this.CMPNY_NM = "시온파파 컴퍼니_"+(new Date().getTime()/1000);
+        CmpnyDTO cmpnyDTO = CmpnyDTO.builder()
+                .cmpnyNm(this.CMPNY_NM)
                 .build();
 
         //when
         ResponseVO<Long> responseVO = null;
         try {
-            responseVO = creatorMngService.add(creatorDTO);
-            this.CREATOR_ID = responseVO.getResultInfo();
+            responseVO = cmpnyMngService.add(cmpnyDTO);
+            this.CMPNY_ID = responseVO.getResultInfo();
         } catch (RsException e){
             responseVO = ResponseVO.<Long>errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).build();
         }
@@ -48,70 +47,66 @@ class CreatorMngServiceTest {
         if(ErrCd.OK.equals(responseVO.getErrCd()))
             Assertions.assertEquals(true, true);
         else
-            Assertions.fail("크리에이터 등록 실패. [실패사유]: " + responseVO.getErrMsg() + " " + responseVO.getResultInfo());
+            Assertions.fail("회사 등록 실패. [실패사유]: " + responseVO.getErrMsg() + " " + responseVO.getResultInfo());
     }
     @Test
-    @DisplayName("[실패 케이스]: 크리에이터 중복 등록")
+    @DisplayName("[실패 케이스]: 회사 중복 등록")
     void addFailByDuplicate() {
         //given
-        CreatorDTO creatorDTO = CreatorDTO.builder()
-                .creatorNm(this.CREATOR_NM)
-                .age(99)
-                .sex("1")
+        CmpnyDTO cmpnyDTO = CmpnyDTO.builder()
+                .cmpnyNm(this.CMPNY_NM)
                 .build();
 
         //when
         ResponseVO<Long> responseVO = null;
         try {
-            responseVO = creatorMngService.add(creatorDTO);
+            responseVO = cmpnyMngService.add(cmpnyDTO);
         } catch (RsException e){
             responseVO = ResponseVO.<Long>errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).build();
         }
 
         //then
         if(ErrCd.OK.equals(responseVO.getErrCd()))
-            Assertions.fail("중복 크리에이터 등록실패 케이스 테스트 실패");
+            Assertions.fail("중복 회사 등록실패 케이스 테스트 실패");
         else
             Assertions.assertEquals(true, true);
     }
     @Test
-    @DisplayName("[실패 케이스]: 크리에이터 등록 시 유효성 검증")
+    @DisplayName("[실패 케이스]: 회사 등록 시 파라미터 유효성 검증")
     void addFailByValidate() {
         //given
-        CreatorDTO creatorDTO = CreatorDTO.builder().build();
+        CmpnyDTO cmpnyDTO = CmpnyDTO.builder().build();
 
         //when
         ResponseVO<Long> responseVO = null;
         try {
-            responseVO = creatorMngService.add(creatorDTO);
+            responseVO = cmpnyMngService.add(cmpnyDTO);
         } catch (RsException e){
             responseVO = ResponseVO.<Long>errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).build();
         }
 
         //then
         if(ErrCd.OK.equals(responseVO.getErrCd()))
-            Assertions.fail("크리에이터 등록 유효성 검증실패 케이스 테스트 실패");
+            Assertions.fail("회사 등록 시 파라미터 유효성 검증실패 케이스 테스트 실패");
         else
             Assertions.assertEquals(true, true);
     }
 
     @Test
-    @DisplayName("[성공 케이스]: 크리에이터 수정")
+    @DisplayName("[성공 케이스]: 회사 수정")
     @Order(2)
     void modifySuccess() {
         //given
-        this.CREATOR_NM = this.CREATOR_NM.replace("시온파파", "시온파파Tube");
-        CreatorDTO creatorDTO = CreatorDTO.builder()
-                .creatorId(this.CREATOR_ID)
-                .creatorNm(this.CREATOR_NM)
-                .age(37)
-                .sex("1")
+        this.CMPNY_NM = this.CMPNY_NM.replace("시온파파 컴퍼니", "시온파파 Enter");
+        CmpnyDTO cmpnyDTO = CmpnyDTO.builder()
+                .cmpnyId(this.CMPNY_ID)
+                .cmpnyNm(this.CMPNY_NM)
                 .build();
 
         //when
         ResponseVO responseVO = ResponseVO.okBuilder().build();
         try {
-            creatorMngService.modify(creatorDTO);
+            cmpnyMngService.modify(cmpnyDTO);
         } catch (RsException e){
             responseVO = ResponseVO.errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).resultInfo(e.getData()).build();
         }
@@ -121,21 +116,21 @@ class CreatorMngServiceTest {
         if(ErrCd.OK.equals(responseVO.getErrCd()))
             Assertions.assertEquals(true, true);
         else
-            Assertions.fail("크리에이터 수정 실패. [실패사유]: " + responseVO.getErrMsg() + " " + responseVO.getResultInfo());
+            Assertions.fail("회사 수정 실패. [실패사유]: " + responseVO.getErrMsg() + " " + responseVO.getResultInfo());
     }
     @Test
-    @DisplayName("[실패 케이스]: 등록되지 않은 크리에이터 수정")
+    @DisplayName("[실패 케이스]: 등록되지 않은 회사 수정")
     void modifyFailByNoDate() {
         //given
-        CreatorDTO creatorDTO = CreatorDTO.builder()
-                .creatorId(999999999999999999L)
-                .creatorNm(this.CREATOR_NM)
+        CmpnyDTO cmpnyDTO = CmpnyDTO.builder()
+                .cmpnyId(999999999999999999L)
+                .cmpnyNm(this.CMPNY_NM)
                 .build();
 
         //when
         ResponseVO responseVO = ResponseVO.okBuilder().build();
         try {
-            creatorMngService.modify(creatorDTO);
+            cmpnyMngService.modify(cmpnyDTO);
         } catch (RsException e){
             responseVO = ResponseVO.errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).resultInfo(e.getData()).build();
         }
@@ -143,20 +138,20 @@ class CreatorMngServiceTest {
 
         //then
         if(ErrCd.OK.equals(responseVO.getErrCd()))
-            Assertions.fail("크리에이터 수정 실패. [실패사유]: " + responseVO.getErrMsg() + " " + responseVO.getResultInfo());
+            Assertions.fail("회사 수정 실패. [실패사유]: " + responseVO.getErrMsg() + " " + responseVO.getResultInfo());
         else
             Assertions.assertEquals(true, true);
     }
     @Test
-    @DisplayName("[실패 케이스]: 크리에이터 수정 시 유효성 검증")
+    @DisplayName("[실패 케이스]: 회사 수정 시 파라미터 유효성 검증")
     void modifyFailByValidate() {
         //given
-        CreatorDTO creatorDTO = CreatorDTO.builder().build();
+        CmpnyDTO cmpnyDTO = CmpnyDTO.builder().build();
 
         //when
         ResponseVO responseVO = ResponseVO.okBuilder().build();
         try {
-            creatorMngService.modify(creatorDTO);
+            cmpnyMngService.modify(cmpnyDTO);
         } catch (RsException e){
             responseVO = ResponseVO.errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).resultInfo(e.getData()).build();
         }
@@ -164,7 +159,7 @@ class CreatorMngServiceTest {
 
         //then
         if(ErrCd.OK.equals(responseVO.getErrCd()))
-            Assertions.fail("크리에이터 수정 실패. [실패사유]: " + responseVO.getErrMsg() + " " + responseVO.getResultInfo());
+            Assertions.fail("회사 수정 실패. [실패사유]: " + responseVO.getErrMsg() + " " + responseVO.getResultInfo());
         else
             Assertions.assertEquals(true, true);
     }

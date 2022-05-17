@@ -51,9 +51,10 @@ public class CreatorMngController {
     @PostMapping(value = "/mng/base/creator", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity add(@RequestBody CreatorDTO dto) {
         try {
-            creatorMngService.add(dto);
+            ResponseVO responseVO = creatorMngService.add(dto);
 
-            return new ResponseEntity<ResponseVO>(ResponseVO.okBuilder().build(), HttpStatus.OK);
+//            return new ResponseEntity<ResponseVO>(ResponseVO.okBuilder().build(), HttpStatus.OK);
+            return new ResponseEntity<ResponseVO>(responseVO, responseVO.getErrCd().getStatus());
         } catch (RsException e) {
             return new ResponseEntity(ResponseVO.errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).resultInfo(e.getData()).build(), e.getErrCd().getStatus());
         }

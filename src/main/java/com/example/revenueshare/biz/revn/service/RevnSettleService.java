@@ -23,6 +23,9 @@ import com.example.revenueshare.core.service.ValidateType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 @RequiredArgsConstructor
 public class RevnSettleService extends OnlyCreateServiceTmplate<ResponseVO, String, RevnSettleDTO, ChannelRsMastIds> {
@@ -93,11 +96,14 @@ public class RevnSettleService extends OnlyCreateServiceTmplate<ResponseVO, Stri
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
         channelRepository.findById(dto.getChannelId())
                 .orElseThrow(() -> new RsException(ErrCd.ERR401, String.format("등록되지 않은 채널(%d) 입니다", dto.getChannelId())));
-        if (type.equals(ValidateType.C))
+        if (type.equals(ValidateType.C)){
             channelRsMastRepository.findById(ChannelRsMastIds.builder().channel(dto.getChannelId()).calYm(dto.getCalYm()).build())
                     .ifPresent(data -> {
                         throw new RsException(ErrCd.ERR401, String.format("%s 채널의 %s년%s월 수익정산이 등록되어 있습니다.", data.getChannel().getChannelNm(), data.getCalYm().substring(0, 4), data.getCalYm().substring(4)));
                     });
+            if(Integer.parseInt(dto.getCalYm()) >= Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM"))))
+                throw new RsException(ErrCd.ERR401, "직전월 수익까지만 정산이 가능 합니다.");
+        }
     }
 
 

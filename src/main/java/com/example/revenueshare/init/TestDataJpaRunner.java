@@ -7,17 +7,20 @@ import com.example.revenueshare.biz.mng.base.service.ChannelMngService;
 import com.example.revenueshare.biz.mng.base.service.CmpnyMngService;
 import com.example.revenueshare.biz.mng.base.service.CreatorMngService;
 import com.example.revenueshare.biz.mng.chrevn.model.ChannelRevnDTO;
+import com.example.revenueshare.biz.mng.chrevn.model.ChannelRevnSearchDTO;
 import com.example.revenueshare.biz.mng.chrevn.service.ChannelRevnMngService;
 import com.example.revenueshare.biz.mng.cntrt.model.ContractCmpnyDTO;
+import com.example.revenueshare.biz.mng.cntrt.model.ContractCmpnySearchDTO;
 import com.example.revenueshare.biz.mng.cntrt.model.ContractCreatorDTO;
+import com.example.revenueshare.biz.mng.cntrt.model.ContractCreatorSearchDTO;
 import com.example.revenueshare.biz.mng.cntrt.service.ContractCmpnyMngService;
 import com.example.revenueshare.biz.mng.cntrt.service.ContractCreatorMngService;
 import com.example.revenueshare.biz.revn.model.RevnSettleDTO;
 import com.example.revenueshare.biz.revn.service.RevnSettleService;
+import com.example.revenueshare.core.utils.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -70,36 +73,42 @@ public class TestDataJpaRunner implements ApplicationRunner {
         * 기초데이터 등록
         ====================================================== */
         //채널 등록
-        createChannelDTO().forEach(data -> channelMngService.add(data));
+        if (channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo().isEmpty())
+            createChannelDTO().forEach(data -> channelMngService.add(data));
         //회사 등록
-        createCmpnyDTO().forEach(data -> cmpnyMngService.add(data));
+        if (cmpnyMngService.findAllBy(CmpnySearchDTO.builder().build()).getResultInfo().isEmpty())
+            createCmpnyDTO().forEach(data -> cmpnyMngService.add(data));
         //크리에이터 등록
-        createCreatorDTO().forEach(data -> creatorMngService.add(data));
+        if (creatorMngService.findAllBy(CreatorSearchDTO.builder().build()).getResultInfo().isEmpty())
+            createCreatorDTO().forEach(data -> creatorMngService.add(data));
 
         /* ======================================================
         * 계약정보 등록
         ====================================================== */
         //회사와 채널간 계약정보 등록
-        channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
-                .forEach(row -> contractCmpnyMngService.add(createContractCmpnyDTO(cmpnyRepository.findByCmpnyNm("샌드박스").get().getCmpnyId(), row.getChannelId())));
+        if (contractCmpnyMngService.findAllBy(ContractCmpnySearchDTO.builder().build()).getResultInfo().isEmpty())
+            channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
+                    .forEach(row -> contractCmpnyMngService.add(createContractCmpnyDTO(cmpnyRepository.findByCmpnyNm("샌드박스").get().getCmpnyId(), row.getChannelId())));
         //크리에이터와 채널간 계약정보 등록
-        channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
-                .forEach(row -> createContractCreatorDTO(row.getChannelId(), creatorMngService.findAllBy(CreatorSearchDTO.builder().build()).getResultInfo()).forEach(data -> contractCreatorMngService.add(data))
-                );
+        if (contractCreatorMngService.findAllBy(ContractCreatorSearchDTO.builder().build()).getResultInfo().isEmpty())
+            channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
+                    .forEach(row -> createContractCreatorDTO(row.getChannelId(), creatorMngService.findAllBy(CreatorSearchDTO.builder().build()).getResultInfo()).forEach(data -> contractCreatorMngService.add(data))
+                    );
 
         /* ======================================================
         * 채널수익 등록
         ====================================================== */
         //일별 채널수익 등록
-        channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
-                .forEach(row -> createChannelRevnDTO(row.getChannelId()).forEach(data -> channelRevnMngService.add(data)));
+        if (channelRevnMngService.findAllBy(ChannelRevnSearchDTO.builder().build()).getResultInfo().isEmpty())
+            channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
+                    .forEach(row -> createChannelRevnDTO(row.getChannelId()).forEach(data -> channelRevnMngService.add(data)));
 
-        /* ======================================================
-        * 채널수익 정산
-        ====================================================== */
-        //채널수익정산(회사 및 크리에이터)
-        channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
-                .forEach(row -> createRevnSettleDTO(row.getChannelId()).forEach(data -> revnSettleService.add(data)));
+//        /* ======================================================
+//        * 채널수익 정산
+//        ====================================================== */
+//        //채널수익정산(회사 및 크리에이터)
+//        channelMngService.findAllBy(ChannelSearchDTO.builder().build()).getResultInfo()
+//                .forEach(row -> createRevnSettleDTO(row.getChannelId()).forEach(data -> revnSettleService.add(data)));
 
 
         System.out.println("============================================================================================================");
@@ -157,7 +166,7 @@ public class TestDataJpaRunner implements ApplicationRunner {
 
         for (String yyyy : years)
             for (int i = 0; i < 1000; i++)
-                list.add(initChannelRevnDTO(channelId, yyyy + randomDay(), RevnSeCd.HITS.getCode(), randomMoney()));
+                list.add(initChannelRevnDTO(channelId, yyyy + RandomUtils.randomDay(), RevnSeCd.HITS.getCode(), RandomUtils.randomMoney()));
 
         return list;
     }
@@ -237,48 +246,6 @@ public class TestDataJpaRunner implements ApplicationRunner {
                 .build();
     }
 
-
-    private String randomDay() {
-        int iMinMonth = 1;
-        int iMaxMonth = 12;
-        int iMinDay = 1;
-        int iMaxDay = 31;
-
-        int iRandomMonth = (int) (Math.random() * iMaxMonth - iMinMonth + 1) + iMinMonth;
-        int iRandomDay = 0;
-
-        switch (iRandomMonth) {
-            case 1:
-            case 3:
-            case 5:
-            case 7:
-            case 8:
-            case 10:
-            case 12:
-                iRandomDay = (int) (Math.random() * iMaxDay - iMinDay + 1) + iMinDay; //최대 31일
-                break;
-            case 4:
-            case 6:
-            case 9:
-            case 11:
-                iRandomDay = (int) (Math.random() * (iMaxDay - 1) - (iMinDay) + 1) + iMinDay; //최대 30일
-                break;
-            case 2:
-                iRandomDay = (int) (Math.random() * (iMaxDay - 3) - (iMinDay) + 1) + iMinDay; //최대 28일
-                break;
-            default:
-                return randomDay();
-        }
-
-        return String.format("%02d%02d", iRandomMonth, iRandomDay);
-    }
-
-
-    private long randomMoney() {
-        int min = 10000;
-        int max = 10000000;
-        return (long) (Math.floor(Math.random() * (min - max + 1)) + min)*-1;
-    }
 
 
 }

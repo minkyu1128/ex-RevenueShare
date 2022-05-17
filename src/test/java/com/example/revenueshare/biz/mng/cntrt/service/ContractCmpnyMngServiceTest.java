@@ -1,13 +1,9 @@
 package com.example.revenueshare.biz.mng.cntrt.service;
 
-import com.example.revenueshare.biz.mng.base.domain.Channel;
-import com.example.revenueshare.biz.mng.base.domain.Cmpny;
-import com.example.revenueshare.biz.mng.base.domain.repository.ChannelRepository;
-import com.example.revenueshare.biz.mng.base.domain.repository.CmpnyRepository;
-import com.example.revenueshare.biz.mng.base.model.ChannelSearchDTO;
-import com.example.revenueshare.biz.mng.base.model.CmpnySearchDTO;
-import com.example.revenueshare.biz.mng.cntrt.domain.ContractCmpny;
-import com.example.revenueshare.biz.mng.cntrt.domain.repository.ContractCmpnyRepository;
+import com.example.revenueshare.biz.mng.base.model.ChannelDTO;
+import com.example.revenueshare.biz.mng.base.model.CmpnyDTO;
+import com.example.revenueshare.biz.mng.base.service.ChannelMngService;
+import com.example.revenueshare.biz.mng.base.service.CmpnyMngService;
 import com.example.revenueshare.biz.mng.cntrt.model.ContractCmpnyDTO;
 import com.example.revenueshare.core.exception.ErrCd;
 import com.example.revenueshare.core.exception.RsException;
@@ -19,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Date;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -29,13 +25,12 @@ class ContractCmpnyMngServiceTest {
 
     @Autowired
     private ContractCmpnyMngService contractCmpnyMngService;
+    @Autowired
+    private CmpnyMngService cmpnyMngService;
+    @Autowired
+    private ChannelMngService channelMngService;
 
-    @Autowired
-    private CmpnyRepository cmpnyRepository;
-    @Autowired
-    private ChannelRepository channelRepository;
-    @Autowired
-    private ContractCmpnyRepository contractCmpnyRepository;
+
 
 
 
@@ -46,31 +41,22 @@ class ContractCmpnyMngServiceTest {
     @Order(1)
     void addSuccess() {
         //given
-        List<Cmpny> cmpnys = cmpnyRepository.findFetchAllByDto(CmpnySearchDTO.builder().build());
-        List<Channel> channels = channelRepository.findFetchAllByDto(ChannelSearchDTO.builder().build());
-        ContractCmpny contractCmpny = null;
-        Long cmpnyId = null;
-        Long channelId = null;
-        LOOP_BREAK:
-        for (Cmpny cmpny : cmpnys) {
-            for (Channel channel : channels) {
-                contractCmpny = contractCmpnyRepository.findByCmpnyAndChannel(cmpny, channel).orElse(null);
-                if (contractCmpny == null){
-                    cmpnyId = cmpny.getCmpnyId();
-                    channelId = channel.getChannelId();
-                    break LOOP_BREAK;
-                }
-
-            }
-            if(contractCmpny != null)
-                break;
-        }
+        CmpnyDTO cmpnyDTO = CmpnyDTO.builder()
+                .cmpnyNm("계약Cmpny_"+(new Date().getTime()/1000))
+                .build();
+        Long cmpnyId = (Long) cmpnyMngService.add(cmpnyDTO).getResultInfo();
+        ChannelDTO channelDTO = ChannelDTO.builder()
+                .channelNm("계약Cmpny Tube_"+(new Date().getTime()/1000))
+                .openDe(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                .build();
+        Long channelId = (Long) channelMngService.add(channelDTO).getResultInfo();
         this.CREATE_DTO = ContractCmpnyDTO.builder()
                 .cmpnyId(cmpnyId)
                 .channelId(channelId)
                 .cntrDe(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
                 .rsRate(77)
                 .build();
+
 
         //when
         ResponseVO<Long> responseVO = null;
@@ -109,7 +95,7 @@ class ContractCmpnyMngServiceTest {
             Assertions.assertEquals(true, true);
     }
     @Test
-    @DisplayName("[실패 케이스]: 회사 계약정보 등록 시 유효성 검증")
+    @DisplayName("[실패 케이스]: 회사 계약정보 등록 시 파라미터 유효성 검증")
     void addFailByValidate() {
         //given
         ContractCmpnyDTO contractCmpnyDTO = ContractCmpnyDTO.builder().build();
@@ -124,7 +110,36 @@ class ContractCmpnyMngServiceTest {
 
         //then
         if(ErrCd.OK.equals(responseVO.getErrCd()))
-            Assertions.fail("회사 계약정보 등록 유효성 검증실패 케이스 테스트 실패");
+            Assertions.fail("회사 계약정보 등록 시 파라미터 유효성 검증실패 케이스 테스트 실패");
+        else
+            Assertions.assertEquals(true, true);
+    }
+    @Test
+    @DisplayName("[실패 케이스]: 회사 계약정보 등록 시 채널과 계약된 모든 회사 Rs요율 합계 100% 초과")
+    void addFailByRsRate() {
+        //given
+        CmpnyDTO cmpnyDTO = CmpnyDTO.builder()
+                .cmpnyNm("시온엔터_"+(new Date().getTime()/1000))
+                .build();
+        Long cmpnyId = (Long) cmpnyMngService.add(cmpnyDTO).getResultInfo();
+        ContractCmpnyDTO contractCmpnyDTO = ContractCmpnyDTO.builder()
+                .cmpnyId(cmpnyId)
+                .channelId(this.CREATE_DTO.getChannelId())
+                .cntrDe(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                .rsRate(99)
+                .build();
+
+        //when
+        ResponseVO<Long> responseVO = null;
+        try {
+            responseVO = contractCmpnyMngService.add(contractCmpnyDTO);
+        } catch (RsException e){
+            responseVO = ResponseVO.<Long>errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).build();
+        }
+
+        //then
+        if(ErrCd.OK.equals(responseVO.getErrCd()))
+            Assertions.fail("회사 계약정보 등록 RS요율합 100%초과 케이스 테스트 실패");
         else
             Assertions.assertEquals(true, true);
     }
@@ -185,7 +200,7 @@ class ContractCmpnyMngServiceTest {
             Assertions.assertEquals(true, true);
     }
     @Test
-    @DisplayName("[실패 케이스]: 회사 계약정보 수정 시 유효성 검증")
+    @DisplayName("[실패 케이스]: 회사 계약정보 수정 시 파라미터 유효성 검증")
     void modifyFailByValidate() {
         //given
         ContractCmpnyDTO contractCmpnyDTO = ContractCmpnyDTO.builder().build();

@@ -51,9 +51,10 @@ public class ContractCmpnyMngController {
     @PostMapping(value = "/mng/cntrt/ch/cmpny", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity add(@RequestBody ContractCmpnyDTO dto) {
         try {
-            contractCmpnyMngService.add(dto);
+            ResponseVO responseVO = contractCmpnyMngService.add(dto);
 
-            return new ResponseEntity<ResponseVO>(ResponseVO.okBuilder().build(), HttpStatus.OK);
+//            return new ResponseEntity<ResponseVO>(ResponseVO.okBuilder().build(), HttpStatus.OK);
+            return new ResponseEntity<ResponseVO>(responseVO, responseVO.getErrCd().getStatus());
         } catch (RsException e) {
             return new ResponseEntity(ResponseVO.errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).resultInfo(e.getData()).build(), e.getErrCd().getStatus());
         }

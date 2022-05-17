@@ -1,13 +1,9 @@
 package com.example.revenueshare.biz.mng.cntrt.service;
 
-import com.example.revenueshare.biz.mng.base.domain.Channel;
-import com.example.revenueshare.biz.mng.base.domain.Creator;
-import com.example.revenueshare.biz.mng.base.domain.repository.ChannelRepository;
-import com.example.revenueshare.biz.mng.base.domain.repository.CreatorRepository;
-import com.example.revenueshare.biz.mng.base.model.ChannelSearchDTO;
-import com.example.revenueshare.biz.mng.base.model.CreatorSearchDTO;
-import com.example.revenueshare.biz.mng.cntrt.domain.ContractCreator;
-import com.example.revenueshare.biz.mng.cntrt.domain.repository.ContractCreatorRepository;
+import com.example.revenueshare.biz.mng.base.model.ChannelDTO;
+import com.example.revenueshare.biz.mng.base.model.CreatorDTO;
+import com.example.revenueshare.biz.mng.base.service.ChannelMngService;
+import com.example.revenueshare.biz.mng.base.service.CreatorMngService;
 import com.example.revenueshare.biz.mng.cntrt.model.ContractCreatorDTO;
 import com.example.revenueshare.core.exception.ErrCd;
 import com.example.revenueshare.core.exception.RsException;
@@ -19,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Date;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -29,13 +25,11 @@ class ContractCreatorMngServiceTest {
 
     @Autowired
     private ContractCreatorMngService contractCreatorMngService;
+    @Autowired
+    private CreatorMngService creatorMngService;
+    @Autowired
+    private ChannelMngService channelMngService;
 
-    @Autowired
-    private CreatorRepository creatorRepository;
-    @Autowired
-    private ChannelRepository channelRepository;
-    @Autowired
-    private ContractCreatorRepository contractCreatorRepository;
 
 
     private ContractCreatorDTO CREATE_DTO;
@@ -45,25 +39,15 @@ class ContractCreatorMngServiceTest {
     @Order(1)
     void addSuccess() {
         //given
-        List<Creator> creators = creatorRepository.findFetchAllByDto(CreatorSearchDTO.builder().build());
-        List<Channel> channels = channelRepository.findFetchAllByDto(ChannelSearchDTO.builder().build());
-        ContractCreator contractCreator = null;
-        Long creatorId = null;
-        Long channelId = null;
-        LOOP_BREAK:
-        for (Creator creator : creators) {
-            for (Channel channel : channels) {
-                contractCreator = contractCreatorRepository.findByCreatorAndChannel(creator, channel).orElse(null);
-                if (contractCreator == null){
-                    creatorId = creator.getCreatorId();
-                    channelId = channel.getChannelId();
-                    break LOOP_BREAK;
-                }
-
-            }
-            if(contractCreator != null)
-                break;
-        }
+        CreatorDTO creatorDTO = CreatorDTO.builder()
+                .creatorNm("계약Creator_"+(new Date().getTime()/1000))
+                .build();
+        Long creatorId = (Long) creatorMngService.add(creatorDTO).getResultInfo();
+        ChannelDTO channelDTO = ChannelDTO.builder()
+                .channelNm("계약Creator Tube_"+(new Date().getTime()/1000))
+                .openDe(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                .build();
+        Long channelId = (Long) channelMngService.add(channelDTO).getResultInfo();
         this.CREATE_DTO = ContractCreatorDTO.builder()
                 .creatorId(creatorId)
                 .channelId(channelId)
@@ -110,7 +94,7 @@ class ContractCreatorMngServiceTest {
     }
 
     @Test
-    @DisplayName("[실패 케이스]: 크리에이터 계약정보 등록 시 유효성 검증")
+    @DisplayName("[실패 케이스]: 크리에이터 계약정보 등록 시 파라미터 유효성 검증")
     void addFailByValidate() {
         //given
         ContractCreatorDTO contractCreatorDTO = ContractCreatorDTO.builder().build();
@@ -125,7 +109,36 @@ class ContractCreatorMngServiceTest {
 
         //then
         if (ErrCd.OK.equals(responseVO.getErrCd()))
-            Assertions.fail("크리에이터 계약정보 등록 유효성 검증실패 케이스 테스트 실패");
+            Assertions.fail("크리에이터 계약정보 등록 시 파라미터 유효성 검증실패 케이스 테스트 실패");
+        else
+            Assertions.assertEquals(true, true);
+    }
+    @Test
+    @DisplayName("[실패 케이스]: 크리에이터 계약정보 등록 시 채널과 계약된 모든 크리에이터 요율 합계 100% 초과")
+    void addFailByRsRate() {
+        //given
+        CreatorDTO creatorDTO = CreatorDTO.builder()
+                .creatorNm("길동이_"+(new Date().getTime()/1000))
+                .build();
+        Long creatorId = (Long) creatorMngService.add(creatorDTO).getResultInfo();
+        ContractCreatorDTO contractCreatorDTO = ContractCreatorDTO.builder()
+                .creatorId(creatorId)
+                .channelId(this.CREATE_DTO.getChannelId())
+                .cntrDe(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                .rsRate(99)
+                .build();
+
+        //when
+        ResponseVO<Long> responseVO = null;
+        try {
+            responseVO = contractCreatorMngService.add(contractCreatorDTO);
+        } catch (RsException e){
+            responseVO = ResponseVO.<Long>errBuilder().errCd(e.getErrCd()).errMsg(e.getMessage()).build();
+        }
+
+        //then
+        if(ErrCd.OK.equals(responseVO.getErrCd()))
+            Assertions.fail("회사 계약정보 등록 RS요율합 100%초과 케이스 테스트 실패");
         else
             Assertions.assertEquals(true, true);
     }
@@ -188,7 +201,7 @@ class ContractCreatorMngServiceTest {
     }
 
     @Test
-    @DisplayName("[실패 케이스]: 크리에이터 계약정보 수정 시 유효성 검증")
+    @DisplayName("[실패 케이스]: 크리에이터 계약정보 수정 시 파라미터 유효성 검증")
     void modifyFailByValidate() {
         //given
         ContractCreatorDTO contractCreatorDTO = ContractCreatorDTO.builder().build();

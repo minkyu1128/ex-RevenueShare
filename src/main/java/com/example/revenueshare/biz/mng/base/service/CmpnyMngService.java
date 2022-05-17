@@ -71,11 +71,11 @@ public class CmpnyMngService extends CrudValidServiceTmplate<ResponseVO, CmpnySe
         ResponseVO validate = validation(dto);
         if (!ErrCd.OK.equals(validate.getErrCd()))
             throw new RsException(validate.getErrCd(), validate.getErrMsg(), validate.getResultInfo());
-        if (type.equals(ValidateType.C))
-            cmpnyRepository.findByCmpnyNm(dto.getCmpnyNm())
-                    .ifPresent(data -> {
-                        throw new RsException(ErrCd.ERR401, "동일한 회사명(" + data.getCmpnyNm() + ")이 등록되어 있습니다.");
-                    });
+//        if (type.equals(ValidateType.C))
+        cmpnyRepository.findByCmpnyNm(dto.getCmpnyNm())
+                .ifPresent(data -> {
+                    throw new RsException(ErrCd.ERR401, "동일한 회사명(" + data.getCmpnyNm() + ")이 등록되어 있습니다.");
+                });
 
     }
 

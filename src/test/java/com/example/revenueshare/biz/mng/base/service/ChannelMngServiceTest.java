@@ -1,7 +1,6 @@
-package com.example.revenueshare.ctgy.base.service;
+package com.example.revenueshare.biz.mng.base.service;
 
 import com.example.revenueshare.biz.mng.base.model.ChannelDTO;
-import com.example.revenueshare.biz.mng.base.service.ChannelMngService;
 import com.example.revenueshare.core.exception.ErrCd;
 import com.example.revenueshare.core.exception.RsException;
 import com.example.revenueshare.core.model.ResponseVO;
@@ -77,7 +76,7 @@ class ChannelMngServiceTest {
             Assertions.assertEquals(true, true);
     }
     @Test
-    @DisplayName("[실패 케이스]: 채널 등록 시 유효성 검증")
+    @DisplayName("[실패 케이스]: 채널 등록 시 파라미터 유효성 검증")
     void addFailByValidate() {
         //given
         ChannelDTO channelDTO = ChannelDTO.builder().build();
@@ -92,7 +91,7 @@ class ChannelMngServiceTest {
 
         //then
         if(ErrCd.OK.equals(responseVO.getErrCd()))
-            Assertions.fail("채널 등록 유효성 검증실패 케이스 테스트 실패");
+            Assertions.fail("채널 등록 시 파라미터 유효성 검증실패 케이스 테스트 실패");
         else
             Assertions.assertEquals(true, true);
     }
@@ -150,7 +149,7 @@ class ChannelMngServiceTest {
             Assertions.assertEquals(true, true);
     }
     @Test
-    @DisplayName("[실패 케이스]: 채널 수정 시 유효성 검증")
+    @DisplayName("[실패 케이스]: 채널 수정 시 파라미터 유효성 검증")
     void modifyFailByValidate() {
         //given
         ChannelDTO channelDTO = ChannelDTO.builder().build();
